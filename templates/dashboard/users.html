@@ -1,0 +1,122 @@
+{% extends "dashboard/base.html" %}
+{% load humanize %}
+
+{% block title %}مدیریت کاربران — {{ SITE_NAME }}{% endblock %}
+{% block dashboard_title %}مدیریت کاربران{% endblock %}
+{% block dashboard_subtitle %}نقش‌ها، وضعیت حساب‌ها و حذف کاربران{% endblock %}
+
+{% block dashboard_content %}
+<form method="get" class="filter-panel mb-4">
+  <div class="row g-3 align-items-end">
+    <div class="col-md-6">
+      <label class="form-label" for="admin-user-q">جستجو</label>
+      <input type="search" class="form-control" id="admin-user-q" name="q" value="{{ query }}"
+             placeholder="ایمیل، نام یا موبایل">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" for="admin-user-role">نقش</label>
+      <select class="form-select" id="admin-user-role" name="role">
+        <option value="">همهٔ نقش‌ها</option>
+        <option value="user" {% if current_role == "user" %}selected{% endif %}>کاربر</option>
+        <option value="admin" {% if current_role == "admin" %}selected{% endif %}>مدیر سیستم</option>
+      </select>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-fill">جستجو</button>
+      {% if query or current_role %}
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:users' %}">حذف</a>
+      {% endif %}
+    </div>
+  </div>
+</form>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <caption class="visually-hidden">فهرست کاربران سامانه</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col">کاربر</th>
+            <th scope="col">موبایل</th>
+            <th scope="col">شهر</th>
+            <th scope="col" class="text-center">مهارت</th>
+            <th scope="col" class="text-center">درخواست</th>
+            <th scope="col">نقش</th>
+            <th scope="col">عضویت</th>
+            <th scope="col" class="text-center">وضعیت</th>
+            <th scope="col" class="text-center">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in page_obj %}
+            <tr class="{% if not item.is_active %}opacity-50{% endif %}">
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <img class="avatar avatar-sm" src="{{ item.avatar_url }}" alt="">
+                  <div class="min-w-0">
+                    <a class="d-block text-truncate fw-semibold text-body"
+                       href="{% url 'accounts:public_profile' item.pk %}">{{ item.display_name }}</a>
+                    <small class="text-muted-2 text-truncate d-block">{{ item.email }}</small>
+                  </div>
+                </div>
+              </td>
+              <td class="text-nowrap">{{ item.phone|default:"—" }}</td>
+              <td class="text-nowrap">{{ item.profile.city|default:"—" }}</td>
+              <td class="text-center">{{ item.skills_count }}</td>
+              <td class="text-center">{{ item.sent_count }}</td>
+              <td>
+                {% if item.is_superuser %}
+                  <span class="status-badge status-approved">مدیر ارشد</span>
+                {% else %}
+                  <form method="post" action="{% url 'dashboard:user_change_role' item.pk %}"
+                        class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="role" value="{% if item.role == 'admin' %}user{% else %}admin{% endif %}">
+                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                      {% if item.role == "admin" %}مدیر سیستم{% else %}کاربر{% endif %}
+                    </button>
+                  </form>
+                {% endif %}
+              </td>
+              <td class="text-nowrap small">{{ item.date_joined|date:"Y/m/d" }}</td>
+              <td class="text-center">
+                {% if item.is_active %}
+                  <span class="status-badge status-approved">فعال</span>
+                {% else %}
+                  <span class="status-badge status-rejected">غیرفعال</span>
+                {% endif %}
+              </td>
+              <td class="text-center text-nowrap">
+                {% if not item.is_superuser and item.pk != user.pk %}
+                  <form method="post" action="{% url 'dashboard:user_toggle_active' item.pk %}"
+                        class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                      {% if item.is_active %}غیرفعال کن{% else %}فعال کن{% endif %}
+                    </button>
+                  </form>
+                  <form method="post" action="{% url 'dashboard:user_delete' item.pk %}"
+                        class="d-inline"
+                        onsubmit="return confirm('حساب «{{ item.display_name }}» و همهٔ اطلاعات وابستهٔ آن حذف شود؟');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">حذف</button>
+                  </form>
+                {% else %}
+                  <span class="text-muted-2 small">—</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="9" class="text-center text-muted-2 py-4">کاربری یافت نشد.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">{% include "partials/pagination.html" %}</div>
+{% endblock %}

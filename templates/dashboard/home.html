@@ -1,0 +1,193 @@
+{% extends "dashboard/base.html" %}
+{% load humanize %}
+
+{% block title %}پنل مدیریت — {{ SITE_NAME }}{% endblock %}
+
+{% block dashboard_title %}نمای کلی سامانه{% endblock %}
+{% block dashboard_subtitle %}وضعیت لحظه‌ای کاربران، مهارت‌ها و درخواست‌های تبادل{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3 g-md-4 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-value">{{ totals.users|intcomma }}</div>
+      <div class="stat-label">کل کاربران</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-value">{{ totals.skills|intcomma }}</div>
+      <div class="stat-label">مهارت و خدمت</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-value">{{ totals.exchanges|intcomma }}</div>
+      <div class="stat-label">کل تبادلها</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block" href="{% url 'dashboard:exchanges' %}?status=pending">
+      <div class="stat-value" style="color: var(--color-warning);">{{ totals.pending_exchanges|intcomma }}</div>
+      <div class="stat-label">در انتظار بررسی</div>
+    </a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">آمار امروز</h2>
+        <a class="small" href="{% url 'dashboard:daily_report' %}">گزارش روزانهٔ کامل</a>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <div class="text-center">
+              <div class="fw-bold h4 mb-0">{{ today.new_users }}</div>
+              <div class="text-muted-2 small">کاربر جدید</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-center">
+              <div class="fw-bold h4 mb-0">{{ today.new_skills }}</div>
+              <div class="text-muted-2 small">مهارت جدید</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-center">
+              <div class="fw-bold h4 mb-0">{{ today.new_exchanges }}</div>
+              <div class="text-muted-2 small">درخواست جدید</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-center">
+              <div class="fw-bold h4 mb-0" style="color: var(--color-accent-dark);">{{ today.approved_today }}</div>
+              <div class="text-muted-2 small">تأییدشده</div>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="d-flex flex-wrap gap-3 small text-muted-2">
+          <span><i class="bi bi-chat-dots ms-1" aria-hidden="true"></i>{{ today.new_messages }} پیام جدید</span>
+          <span><i class="bi bi-flag ms-1" aria-hidden="true"></i>{{ today.new_reports }} گزارش جدید</span>
+          <span><i class="bi bi-shield-check ms-1" aria-hidden="true"></i>{{ today.reviewed_today }} درخواست بررسی‌شده</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">متقاضیان‌ترین مهارت‌ها</h2>
+        <a class="small" href="{% url 'dashboard:skills' %}">مدیریت مهارت‌ها</a>
+      </div>
+      <div class="card-body">
+        <ol class="list-unstyled mb-0">
+          {% for skill in top_skills %}
+            <li class="d-flex justify-content-between align-items-center gap-2 py-2 {% if not forloop.last %}border-bottom{% endif %}">
+              <a class="text-body min-w-0 text-truncate" href="{{ skill.get_absolute_url }}">
+                {{ skill.title }}
+              </a>
+              <span class="tag text-nowrap">{{ skill.total_watches }} دنبال‌کننده</span>
+            </li>
+          {% empty %}
+            <li class="text-muted-2">مهارتی ثبت نشده است.</li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">درخواست‌های در انتظار بررسی</h2>
+        <a class="small" href="{% url 'dashboard:exchanges' %}?status=pending">همه</a>
+      </div>
+      <div class="card-body p-0">
+        {% for exchange in pending_exchanges %}
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 {% if not forloop.last %}border-bottom{% endif %}">
+            <div class="min-w-0">
+              <a class="fw-semibold text-body" href="{% url 'exchanges:review' exchange.pk %}">
+                {{ exchange.title }}
+              </a>
+              <div class="small text-muted-2">
+                {{ exchange.requester.display_name }} ⇄ {{ exchange.provider.display_name }}
+              </div>
+            </div>
+            <a class="btn btn-sm btn-primary" href="{% url 'exchanges:review' exchange.pk %}">بررسی</a>
+          </div>
+        {% empty %}
+          <p class="text-muted-2 m-0 p-3">درخواست بازی وجود ندارد.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">گزارش‌های فعال</h2>
+        <a class="small" href="{% url 'dashboard:reports' %}">همه</a>
+      </div>
+      <div class="card-body p-0">
+        {% for report in open_reports %}
+          <div class="p-3 {% if not forloop.last %}border-bottom{% endif %}">
+            <div class="d-flex justify-content-between gap-2">
+              <span class="fw-semibold">{{ report.get_reason_display }}</span>
+              <small class="text-muted-2 text-nowrap">{{ report.created_at|date:"Y/m/d" }}</small>
+            </div>
+            <p class="small text-muted-2 mb-1">{{ report.description|truncatewords:14 }}</p>
+            <small class="text-muted-2">گزارش‌دهنده: {{ report.reporter.display_name }}</small>
+          </div>
+        {% empty %}
+          <p class="text-muted-2 m-0 p-3">گزارش فعالی وجود ندارد.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-1">
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white"><h2 class="h5 mb-0">پرکاربردترین دسته‌بندی‌ها</h2></div>
+      <div class="card-body">
+        <ol class="list-unstyled mb-0">
+          {% for category in top_categories %}
+            <li class="d-flex justify-content-between align-items-center py-2 {% if not forloop.last %}border-bottom{% endif %}">
+              <span>{{ category.title }}</span>
+              <span class="tag">{{ category.skills_count }} مهارت</span>
+            </li>
+          {% empty %}
+            <li class="text-muted-2">دسته‌بندی ثبت نشده است.</li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white"><h2 class="h5 mb-0">فعال‌ترین کاربران</h2></div>
+      <div class="card-body">
+        <ol class="list-unstyled mb-0">
+          {% for item in busiest_users %}
+            <li class="d-flex justify-content-between align-items-center py-2 {% if not forloop.last %}border-bottom{% endif %}">
+              <a class="text-body" href="{% url 'accounts:public_profile' item.pk %}">{{ item.display_name }}</a>
+              <span class="tag">{{ item.exchange_count }} درخواست</span>
+            </li>
+          {% empty %}
+            <li class="text-muted-2">درخواستی ثبت نشده است.</li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

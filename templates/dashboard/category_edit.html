@@ -1,0 +1,30 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}ویرایش دسته‌بندی — {{ SITE_NAME }}{% endblock %}
+{% block dashboard_title %}ویرایش دسته‌بندی{% endblock %}
+{% block dashboard_subtitle %}{{ category.title }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in form.non_field_errors %}<span class="d-block">{{ error }}</span>{% endfor %}
+            </div>
+          {% endif %}
+          {% include "partials/form_field.html" with field=form.title %}
+          {% include "partials/form_field.html" with field=form.description %}
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">ذخیرهٔ تغییرات</button>
+            <a class="btn btn-outline-secondary" href="{% url 'dashboard:categories' %}">انصراف</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

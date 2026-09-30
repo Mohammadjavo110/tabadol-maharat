@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}ثبت درخواست تبادل — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <nav aria-label="مسیر صفحه">
+          <ol class="breadcrumb bg-transparent p-0 small">
+            <li class="breadcrumb-item"><a href="{% url 'skills:list' %}">مهارت‌ها</a></li>
+            <li class="breadcrumb-item">
+              <a href="{{ skill.get_absolute_url }}">{{ skill.title }}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">درخواست تبادل</li>
+          </ol>
+        </nav>
+
+        <h1 class="h3 mb-1">ثبت درخواست تبادل</h1>
+        <p class="text-muted-2 mb-4">
+          درخواست شما پس از بررسی مدیریت تأیید می‌شود و سپس در تاریخچهٔ تبادل ثبت می‌گردد.
+        </p>
+
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body p-4">
+            <h2 class="h6 text-muted-2 mb-3">مهارت مورد درخواست</h2>
+            {% include "partials/skill_card.html" %}
+            <hr>
+            <div class="d-flex align-items-center gap-2">
+              <img class="avatar avatar-sm" src="{{ provider.avatar_url }}"
+                   alt="تصویر {{ provider.display_name }}">
+              <span class="small">
+                ارائه‌دهنده: <strong>{{ provider.display_name }}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {% for error in form.non_field_errors %}
+                    <span class="d-block">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% include "partials/form_field.html" with field=form.title %}
+              {% include "partials/form_field.html" with field=form.description %}
+              {% include "partials/form_field.html" with field=form.offered_skill %}
+
+              <button type="submit" class="btn btn-primary mt-3">
+                <i class="bi bi-send ms-1" aria-hidden="true"></i>ارسال درخواست
+              </button>
+              <a class="btn btn-outline-secondary" href="{{ skill.get_absolute_url }}">انصراف</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

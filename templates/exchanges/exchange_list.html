@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <h1 class="h3 mb-1">{{ page_title }}</h1>
+        <p class="text-muted-2 mb-0">{{ page_subtitle }}</p>
+      </div>
+      <a class="btn btn-primary" href="{% url 'skills:list' %}">
+        <i class="bi bi-plus-lg ms-1" aria-hidden="true"></i>مهارت جدید
+      </a>
+    </div>
+
+    {% if not is_history %}
+      <div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-label="فیلتر وضعیت">
+        <a class="btn btn-sm {% if not current_status %}btn-primary{% else %}btn-outline-primary{% endif %}"
+           href="{% url 'exchanges:list' %}">همه</a>
+        {% for value, label in status_choices %}
+          <a class="btn btn-sm {% if current_status == value %}btn-primary{% else %}btn-outline-primary{% endif %}"
+             href="?status={{ value }}">{{ label }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if page_obj %}
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          {% for exchange in page_obj %}
+            <a class="d-block p-3 border-bottom text-body {% if not exchange.is_read %}bg-white{% else %}bg-body-tertiary{% endif %}"
+               href="{{ exchange.get_absolute_url }}">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="min-w-0">
+                  <span class="fw-semibold">{{ exchange.title }}</span>
+                  <div class="small text-muted-2">
+                    {{ exchange.requester.display_name }} ⇄ {{ exchange.provider.display_name }}
+                    • {{ exchange.skill.title }}
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 text-nowrap">
+                  <span class="status-badge status-{{ exchange.status }}">
+                    {{ exchange.get_status_display }}
+                  </span>
+                  <small class="text-muted-2">{{ exchange.created_at|date:"Y/m/d" }}</small>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="mt-4">{% include "partials/pagination.html" %}</div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-inbox" aria-hidden="true"></i></div>
+        <h2 class="h5">موردی در این فهرست نیست</h2>
+        <p class="text-muted-2">
+          می‌توانید در صفحهٔ هر مهارت، درخواست تبادل ثبت کنید.
+        </p>
+        <a class="btn btn-primary" href="{% url 'skills:list' %}">مشاهدهٔ مهارت‌ها</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

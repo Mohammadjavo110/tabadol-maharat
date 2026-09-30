@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="bg-white border-bottom">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div>
+        <h1 class="h4 mb-1">{% block dashboard_title %}{% endblock %}</h1>
+        <p class="text-muted-2 small mb-0">{% block dashboard_subtitle %}{% endblock %}</p>
+      </div>
+      {% block dashboard_actions %}{% endblock %}
+    </div>
+
+    <nav class="mt-3" aria-label="بخش‌های پنل مدیریت">
+      <ul class="nav nav-pills flex-nowrap overflow-auto" style="white-space: nowrap;">
+        {% url 'dashboard:home' as u_home %}
+        {% url 'dashboard:users' as u_users %}
+        {% url 'dashboard:skills' as u_skills %}
+        {% url 'dashboard:categories' as u_categories %}
+        {% url 'dashboard:exchanges' as u_exchanges %}
+        {% url 'dashboard:reports' as u_reports %}
+        {% url 'dashboard:daily_report' as u_report %}
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' and request.resolver_match.namespace == 'dashboard' %}active{% endif %}"
+             href="{% url 'dashboard:home' %}">
+            <i class="bi bi-speedometer2 ms-1" aria-hidden="true"></i>نمای کلی
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}"
+             href="{% url 'dashboard:users' %}">
+            <i class="bi bi-people ms-1" aria-hidden="true"></i>کاربران
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'skills' %}active{% endif %}"
+             href="{% url 'dashboard:skills' %}">
+            <i class="bi bi-award ms-1" aria-hidden="true"></i>مهارت‌ها
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'categories' or request.resolver_match.url_name == 'category_edit' %}active{% endif %}"
+             href="{% url 'dashboard:categories' %}">
+            <i class="bi bi-folder2-open ms-1" aria-hidden="true"></i>دسته‌بندی‌ها
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'exchanges' %}active{% endif %}"
+             href="{% url 'dashboard:exchanges' %}">
+            <i class="bi bi-arrow-left-right ms-1" aria-hidden="true"></i>تبادلها
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}"
+             href="{% url 'dashboard:reports' %}">
+            <i class="bi bi-flag ms-1" aria-hidden="true"></i>گزارش‌ها
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'daily_report' %}active{% endif %}"
+             href="{% url 'dashboard:daily_report' %}">
+            <i class="bi bi-calendar-check ms-1" aria-hidden="true"></i>گزارش روزانه
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<section class="section py-4">
+  <div class="container">
+    {% block dashboard_content %}{% endblock %}
+  </div>
+</section>
+{% endblock %}

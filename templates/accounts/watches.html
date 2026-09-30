@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}مهارت‌های دنبال‌شده — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+      <div>
+        <h1 class="h3 mb-1">مهارت‌های دنبال‌شده</h1>
+        <p class="text-muted-2 mb-0">مهارت‌هایی که برای تبادل به آن‌ها علاقه‌مند شده‌اید.</p>
+      </div>
+      <span class="tag">{{ watches_count }} مورد</span>
+    </div>
+
+    {% if watches %}
+      <div class="row g-4">
+        {% for watch in watches %}
+          <div class="col-md-6 col-lg-4">
+            {% include "partials/skill_card.html" with skill=watch.skill %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-eye" aria-hidden="true"></i></div>
+        <h2 class="h5">هنوز مهارتی را دنبال نکرده‌اید</h2>
+        <p class="text-muted-2">
+          در صفحهٔ هر مهارت، با دکمهٔ «دنبال کردن» می‌توانید آن را به این فهرست اضافه کنید.
+        </p>
+        <a class="btn btn-primary" href="{% url 'skills:list' %}">مشاهدهٔ مهارت‌ها</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

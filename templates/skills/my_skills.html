@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}مهارت‌های من — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <h1 class="h3 mb-1">مهارت‌های من</h1>
+        <p class="text-muted-2 mb-0">
+          مجموعاً {{ counts.total }} مورد — {{ counts.active }} فعال، {{ counts.inactive }} غیرفعال
+        </p>
+      </div>
+      <a class="btn btn-primary" href="{% url 'skills:create' %}">
+        <i class="bi bi-plus-lg ms-1" aria-hidden="true"></i>ثبت مهارت جدید
+      </a>
+    </div>
+
+    {% if skills %}
+      <div class="row g-4">
+        {% for skill in page_obj %}
+          <div class="col-md-6 col-lg-4">
+            <div class="position-relative">
+              {% include "partials/skill_card.html" %}
+              <div class="d-flex gap-2 mt-2">
+                <a class="btn btn-sm btn-outline-primary flex-fill"
+                   href="{% url 'skills:edit' skill.pk %}">ویرایش</a>
+                <a class="btn btn-sm btn-outline-danger flex-fill"
+                   href="{% url 'skills:delete' skill.pk %}">حذف</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="mt-5">{% include "partials/pagination.html" %}</div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-award" aria-hidden="true"></i></div>
+        <h2 class="h5">هنوز مهارتی ثبت نکرده‌اید</h2>
+        <p class="text-muted-2">
+          مهارت‌ها و خدمات خود را ثبت کنید تا در نتایج جستجو دیده شوید و درخواست تبادل دریافت کنید.
+        </p>
+        <a class="btn btn-primary" href="{% url 'skills:create' %}">ثبت اولین مهارت</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

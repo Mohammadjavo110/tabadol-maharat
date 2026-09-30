@@ -1,0 +1,84 @@
+<nav class="navbar navbar-expand-lg navbar-skill sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+      <span>{{ SITE_NAME }}</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNav" aria-controls="mainNav"
+            aria-expanded="false" aria-label="نمایش منو">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+             href="{% url 'home' %}">صفحهٔ اصلی</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'skills:list' %}">همهٔ مهارت‌ها</a>
+        </li>
+
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:dashboard' %}">پنل من</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'exchanges:history' %}">تاریخچهٔ تبادل</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:notifications' %}">
+              اعلان‌ها
+              {% if unread_notifications_count %}
+                <span class="badge rounded-pill bg-danger ms-1">{{ unread_notifications_count }}</span>
+              {% endif %}
+            </a>
+          </li>
+          {% if user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard:home' %}">پنل مدیریت</a>
+            </li>
+          {% endif %}
+        {% endif %}
+      </ul>
+
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              <img class="avatar avatar-sm" src="{{ user.avatar_url }}" alt="تصویر پروفایل {{ user.display_name }}">
+              <span>{{ user.get_short_name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-start">
+              <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                <i class="bi bi-person-circle ms-2" aria-hidden="true"></i>پروفایل من</a></li>
+              <li><a class="dropdown-item" href="{% url 'skills:my_skills' %}">
+                <i class="bi bi-award ms-2" aria-hidden="true"></i>مهارت‌های من</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:watches' %}">
+                <i class="bi bi-eye ms-2" aria-hidden="true"></i>مهارت‌های دنبال‌شده</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'accounts:logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item">
+                    <i class="bi bi-box-arrow-right ms-2" aria-hidden="true"></i>خروج
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:login' %}">ورود</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-primary ms-lg-2" href="{% url 'accounts:register' %}">ثبت‌نام</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

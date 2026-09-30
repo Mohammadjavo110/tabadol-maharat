@@ -30,7 +30,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "accounts",
+    "core",
     "skills",
     "exchanges",
     "dashboard",
@@ -59,7 +61,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "accounts.context_processors.site_context",
+                "core.context_processors.site_context",
+                "core.context_processors.unread_notifications",
             ],
         },
     },
@@ -84,14 +87,13 @@ AUTH_USER_MODEL = "accounts.User"
 
 AUTHENTICATION_BACKENDS = [
     "accounts.backends.EmailOrPhoneBackend",
-    "django.contrib.auth.backends.ModelBackend",
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    {"NAME": "accounts.validators.PersianUserAttributeSimilarityValidator"},
+    {"NAME": "accounts.validators.PersianMinimumLengthValidator"},
+    {"NAME": "accounts.validators.PersianCommonPasswordValidator"},
+    {"NAME": "accounts.validators.PersianNumericPasswordValidator"},
 ]
 
 LOGIN_URL = "accounts:login"
@@ -108,7 +110,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
 
 MEDIA_URL = "media/"
@@ -120,3 +122,10 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 PAGINATE_BY = 12
+
+SITE_NAME = "مهارت‌یار"
+SUPPORT_EMAIL = "support@skillyar.ir"
+SUPPORT_PHONE = "۰۲۱-۱۲۳۴۵۶۷۸"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@skillyar.ir"

@@ -1,4 +1,4 @@
-﻿from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.urls import NoReverseMatch
 
@@ -6,7 +6,7 @@ from exchanges.models import Exchange, ExchangeStatus, Notification
 
 
 def exchange_url(exchange: Exchange) -> str:
-    """ØªØ§ ÙˆÙ‚ØªÛŒ Ù…Ø³ÛŒØ±Ù‡Ø§ Ø³Ø§Ø®ØªÙ‡ Ù†Ø´Ø¯Ù‡â€ŒØ§Ù†Ø¯ØŒ Ø³ÛŒÚ¯Ù†Ø§Ù„ Ù†Ø¨Ø§ÛŒØ¯ Ø¨Ø§Ø¹Ø« Ø®Ø·Ø§ Ø´ÙˆØ¯."""
+    """تا وقتی مسیرها ساخته نشده‌اند، سیگنال نباید باعث خطا شود."""
     try:
         return exchange.get_absolute_url()
     except NoReverseMatch:
@@ -14,11 +14,11 @@ def exchange_url(exchange: Exchange) -> str:
 
 
 STATUS_MESSAGES = {
-    ExchangeStatus.PENDING: "Ø¯Ø±Ø®ÙˆØ§Ø³Øª ØªØ¨Ø§Ø¯Ù„ Ø´Ù…Ø§ Ø«Ø¨Øª Ø´Ø¯ Ùˆ Ø¯Ø± Ø§Ù†ØªØ¸Ø§Ø± Ø¨Ø±Ø±Ø³ÛŒ Ù…Ø¯ÛŒØ± Ø§Ø³Øª.",
-    ExchangeStatus.ADMIN_REVIEW: "Ø¯Ø±Ø®ÙˆØ§Ø³Øª ØªØ¨Ø§Ø¯Ù„ Ø´Ù…Ø§ Ø¯Ø± Ø­Ø§Ù„ Ø¨Ø±Ø±Ø³ÛŒ ØªÙˆØ³Ø· Ù…Ø¯ÛŒØ± Ø§Ø³Øª.",
-    ExchangeStatus.APPROVED: "Ø¯Ø±Ø®ÙˆØ§Ø³Øª ØªØ¨Ø§Ø¯Ù„ Ø´Ù…Ø§ ØªØ£ÛŒÛŒØ¯ Ø´Ø¯.",
-    ExchangeStatus.REJECTED: "Ø¯Ø±Ø®ÙˆØ§Ø³Øª ØªØ¨Ø§Ø¯Ù„ Ø´Ù…Ø§ Ø±Ø¯ Ø´Ø¯.",
-    ExchangeStatus.COMPLETED: "ØªØ¨Ø§Ø¯Ù„ Ø¨Ù‡ Ù¾Ø§ÛŒØ§Ù† Ø±Ø³ÛŒØ¯ Ùˆ Ø¯Ø± ØªØ§Ø±ÛŒØ®Ú†Ù‡ Ø«Ø¨Øª Ø´Ø¯.",
+    ExchangeStatus.PENDING: "درخواست تبادل شما ثبت شد و در انتظار بررسی مدیر است.",
+    ExchangeStatus.ADMIN_REVIEW: "درخواست تبادل شما در حال بررسی توسط مدیر است.",
+    ExchangeStatus.APPROVED: "درخواست تبادل شما تأیید شد.",
+    ExchangeStatus.REJECTED: "درخواست تبادل شما رد شد.",
+    ExchangeStatus.COMPLETED: "تبادل به پایان رسید و در تاریخچه ثبت شد.",
 }
 
 
@@ -39,7 +39,7 @@ def notify_status_change(sender, instance: Exchange, created: bool, **kwargs) ->
         for recipient in (instance.provider,):
             Notification.objects.create(
                 user=recipient,
-                text=f"Ø¯Ø±Ø®ÙˆØ§Ø³Øª Ø¬Ø¯ÛŒØ¯ÛŒ Ø¨Ø±Ø§ÛŒ Â«{instance.skill.title}Â» Ø§Ø² {instance.requester} Ø¯Ø§Ø±ÛŒØ¯.",
+                text=f"درخواست جدیدی برای «{instance.skill.title}» از {instance.requester} دارید.",
                 url=exchange_url(instance),
             )
         return

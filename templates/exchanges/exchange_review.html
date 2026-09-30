@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}بررسی درخواست — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h1 class="h3 mb-1">بررسی درخواست تبادل</h1>
+        <p class="text-muted-2 mb-4">
+          این درخواست توسط مدیر سیستم بررسی می‌شود و نتیجه برای هر دو طرف ارسال خواهد شد.
+        </p>
+
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <h2 class="h5 mb-0">{{ exchange.title }}</h2>
+              <span class="status-badge status-{{ exchange.status }}">
+                {{ exchange.get_status_display }}
+              </span>
+            </div>
+            <p class="mb-3">{{ exchange.description|linebreaksbr }}</p>
+            <div class="small text-muted-2 border-top pt-3">
+              <div>درخواست‌کننده: <strong>{{ exchange.requester.display_name }}</strong>
+                ({{ exchange.requester.email }})</div>
+              <div>ارائه‌دهنده: <strong>{{ exchange.provider.display_name }}</strong>
+                ({{ exchange.provider.email }})</div>
+              <div class="mt-1">مهارت مورد تقاضا:
+                <a href="{{ exchange.skill.get_absolute_url }}">{{ exchange.skill.title }}</a></div>
+              {% if exchange.offered_skill %}
+                <div>مهارت پیشنهادی: {{ exchange.offered_skill.title }}</div>
+              {% endif %}
+              <div class="mt-1">تاریخ ثبت: {{ exchange.created_at|date:"Y/m/d — H:i" }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {% for error in form.non_field_errors %}
+                    <span class="d-block">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              <div class="mb-3">
+                <span class="form-label d-block">تصمیم مدیر</span>
+                {% for radio in form.action %}
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="{{ radio.data_name }}"
+                           id="{{ radio.id_for_label }}" value="{{ radio.data.value }}"
+                           {% if radio.data.selected %}checked{% endif %}>
+                    <label class="form-check-label" for="{{ radio.id_for_label }}">
+                      {{ radio.data.label }}
+                    </label>
+                  </div>
+                {% endfor %}
+                {% for error in form.action.errors %}
+                  <span class="field-error">{{ error }}</span>
+                {% endfor %}
+              </div>
+
+              {% include "partials/form_field.html" with field=form.admin_note %}
+
+              <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-primary">ثبت تصمیم</button>
+                <a class="btn btn-outline-secondary"
+                   href="{{ exchange.get_absolute_url }}">بازگشت</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

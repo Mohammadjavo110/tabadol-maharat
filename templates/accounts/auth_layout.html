@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{% block auth_title %}{% endblock %} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-5">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <h1 class="h4 mb-1">{% block auth_heading %}{% endblock %}</h1>
+            {% block auth_subheading %}{% endblock %}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                  <span class="d-block">{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+            {% block auth_form %}{% endblock %}
+          </div>
+        </div>
+        {% block auth_footer %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

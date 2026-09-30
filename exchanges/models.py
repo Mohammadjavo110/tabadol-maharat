@@ -205,8 +205,9 @@ class Report(models.Model):
         return f"گزارش {self.get_reason_display()} درباره {target}"
 
     def clean(self) -> None:
+        super().clean()
         if not self.target_user_id and not self.target_skill_id:
-            raise ValidationError({"target_user": "حداقل یکی از کاربر یا مهارت را انتخاب کنید."})
+            raise ValidationError("حداقل یکی از کاربر یا مهارت را انتخاب کنید.")
 
     @property
     def target_label(self) -> str:

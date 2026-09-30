@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}فهرست مهارت‌ها و خدمات — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <h1 class="h3 mb-1">همهٔ مهارت‌ها و خدمات</h1>
+        <p class="text-muted-2 mb-0">
+          {% if page_obj.paginator.count %}
+            {{ page_obj.paginator.count }} مورد یافت شد.
+          {% else %}
+            موردی برای نمایش وجود ندارد.
+          {% endif %}
+        </p>
+      </div>
+      {% if user.is_authenticated %}
+        <a class="btn btn-primary" href="{% url 'skills:create' %}">
+          <i class="bi bi-plus-lg ms-1" aria-hidden="true"></i>ثبت مهارت جدید
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3">
+        <form method="get" class="filter-panel" role="search">
+          <h2 class="h6 text-muted-2 mb-3">فیلتر و جستجو</h2>
+
+          <div class="mb-3">
+            <label class="form-label" for="id_q">جستجو</label>
+            <input type="search" class="form-control" id="id_q" name="q"
+                   value="{{ form.q.value|default:'' }}"
+                   placeholder="عنوان، توضیحات یا برچسب">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="id_category">دسته‌بندی</label>
+            <select class="form-select" id="id_category" name="category">
+              <option value="">همهٔ دسته‌بندی‌ها</option>
+              {% for category in form.category.field.queryset %}
+                <option value="{{ category.pk }}"
+                        {% if form.category.value|stringformat:"s" == category.pk|stringformat:"s" %}selected{% endif %}>
+                  {{ category.title }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="id_type">نوع</label>
+            <select class="form-select" id="id_type" name="type">
+              <option value="">مهارت و خدمت</option>
+              <option value="skill" {% if form.type.value == "skill" %}selected{% endif %}>مهارت</option>
+              <option value="service" {% if form.type.value == "service" %}selected{% endif %}>خدمت</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="id_level">حداقل سطح</label>
+            <select class="form-select" id="id_level" name="level">
+              <option value="">هر سطح</option>
+              {% for value, label in form.fields.level.choices %}
+                {% if value %}
+                  <option value="{{ value }}" {% if form.level.value == value|stringformat:"s" %}selected{% endif %}>
+                    {{ label }}
+                  </option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="id_city">شهر</label>
+            <input type="text" class="form-control" id="id_city" name="city"
+                   value="{{ form.city.value|default:'' }}" placeholder="مثلاً: تهران">
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">اعمال فیلتر</button>
+            {% if has_filters %}
+              <a class="btn btn-outline-secondary" href="{% url 'skills:list' %}">حذف فیلترها</a>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+
+      <div class="col-lg-9">
+        {% if page_obj %}
+          <div class="row g-4">
+            {% for skill in page_obj %}
+              <div class="col-md-6 col-xl-4">{% include "partials/skill_card.html" %}</div>
+            {% endfor %}
+          </div>
+
+          {% if not page_obj %}
+            <div class="empty-state">
+              <div class="empty-icon"><i class="bi bi-search" aria-hidden="true"></i></div>
+              <h2 class="h5">نتیجه‌ای یافت نشد</h2>
+              <p class="text-muted-2">فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید.</p>
+              <a class="btn btn-primary" href="{% url 'skills:list' %}">نمایش همه</a>
+            </div>
+          {% endif %}
+
+          <div class="mt-5">{% include "partials/pagination.html" %}</div>
+        {% endif %}
+
+        {% if suggestions and not has_filters %}
+          <div class="mt-5">
+            <h2 class="h5 mb-1">پیشنهاد بر اساس مهارت‌های شما</h2>
+            <p class="text-muted-2 small mb-3">
+              این موارد با دسته‌بندی یا برچسب مهارت‌های ثبت‌شدهٔ شما هم‌خوانی دارند.
+            </p>
+            <div class="row g-4">
+              {% for skill in suggestions %}
+                <div class="col-md-6 col-xl-4">{% include "partials/skill_card.html" %}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

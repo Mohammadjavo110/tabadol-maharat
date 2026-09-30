@@ -1,0 +1,42 @@
+{% load skillyar_tags %}
+<article class="card skill-card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <span class="tag tag-type-{{ skill.type }}">{{ skill.get_type_display }}</span>
+      <span class="level-dots" role="img" aria-label="سطح: {{ skill.get_level_display }}">
+        {% for filled in skill.level|level_filled %}
+          <span class="dot {% if filled %}filled{% endif %}"></span>
+        {% endfor %}
+      </span>
+    </div>
+
+    <h3 class="card-title h5 mb-0">
+      <a href="{{ skill.get_absolute_url }}">{{ skill.title }}</a>
+    </h3>
+
+    <p class="skill-description mb-0">{{ skill.description|truncatewords:24 }}</p>
+
+    {% if skill.tags_list %}
+      <div class="d-flex flex-wrap gap-1">
+        {% for tag in skill.tags_list %}<span class="tag">{{ tag }}</span>{% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="card-footer">
+    <div class="d-flex align-items-center gap-2">
+      <img class="avatar avatar-sm" src="{{ skill.owner.avatar_url }}"
+           alt="تصویر {{ skill.owner.display_name }}">
+      <div class="min-w-0 flex-grow-1">
+        <a class="d-block text-truncate small fw-semibold text-body"
+           href="{% url 'accounts:public_profile' skill.owner.pk %}">
+          {{ skill.owner.display_name }}
+        </a>
+        <span class="text-muted-2 small">{{ skill.category.title }}</span>
+      </div>
+      <span class="text-muted-2 small text-nowrap" title="تعداد دنبال‌کنندگان">
+        <i class="bi bi-eye" aria-hidden="true"></i> {{ skill.watchers_count }}
+      </span>
+    </div>
+  </div>
+</article>

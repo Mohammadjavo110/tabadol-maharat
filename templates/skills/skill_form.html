@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h1 class="h3 mb-1">{{ page_title }}</h1>
+        <p class="text-muted-2 mb-4">
+          اطلاعات را دقیق بنویسید تا کاربران دیگر بتوانند درخواست تبادل مناسبی ارسال کنند.
+        </p>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {% for error in form.non_field_errors %}
+                    <span class="d-block">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% include "partials/form_field.html" with field=form.title %}
+              {% include "partials/form_field.html" with field=form.type %}
+              {% include "partials/form_field.html" with field=form.category %}
+              {% include "partials/form_field.html" with field=form.level %}
+              {% include "partials/form_field.html" with field=form.description %}
+              {% include "partials/form_field.html" with field=form.tags %}
+              {% include "partials/form_field.html" with field=form.is_active %}
+
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+                <a class="btn btn-outline-secondary"
+                   href="{% if skill %}{{ skill.get_absolute_url }}{% else %}{% url 'skills:my_skills' %}{% endif %}">
+                  انصراف
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

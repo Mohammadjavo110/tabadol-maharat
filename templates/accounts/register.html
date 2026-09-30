@@ -1,0 +1,26 @@
+{% extends "accounts/auth_layout.html" %}
+
+{% block auth_title %}ثبت‌نام{% endblock %}
+{% block auth_heading %}ساخت حساب کاربری{% endblock %}
+{% block auth_subheading %}
+  <p class="text-muted-2 mb-4">ثبت‌نام رایگان است و کمتر از یک دقیقه طول می‌کشد.</p>
+{% endblock %}
+
+{% block auth_form %}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_field.html" with field=form.full_name %}
+    {% include "partials/form_field.html" with field=form.email %}
+    {% include "partials/form_field.html" with field=form.phone %}
+    {% include "partials/form_field.html" with field=form.password1 %}
+    {% include "partials/form_field.html" with field=form.password2 %}
+    <button type="submit" class="btn btn-primary w-100">ثبت‌نام</button>
+  </form>
+{% endblock %}
+
+{% block auth_footer %}
+  <p class="text-center text-muted-2 mt-3 mb-0">
+    قبلاً ثبت‌نام کرده‌اید؟
+    <a href="{% url 'accounts:login' %}">وارد شوید</a>
+  </p>
+{% endblock %}

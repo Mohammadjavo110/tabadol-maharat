@@ -5,8 +5,6 @@ from django.shortcuts import render
 from exchanges.models import Exchange, ExchangeStatus
 from skills.models import Category, Skill
 
-User = get_user_model()
-
 
 def home(request):
     latest_skills = Skill.objects.filter(is_active=True).select_related("owner", "category")[:6]
@@ -14,7 +12,7 @@ def home(request):
         "latest_skills": latest_skills,
         "categories": Category.objects.annotate(skills_count=Count("skills"))[:8],
         "stats": {
-            "users": User.objects.filter(is_active=True).count(),
+            "users": get_user_model().objects.filter(is_active=True).count(),
             "skills": Skill.objects.filter(is_active=True).count(),
             "exchanges": Exchange.objects.filter(
                 status__in=[ExchangeStatus.APPROVED, ExchangeStatus.COMPLETED]
@@ -22,4 +20,4 @@ def home(request):
         },
         "search_query": request.GET.get("q", ""),
     }
-    return render(request, "home.html", context)
+    return render(request, "core/home.html", context)

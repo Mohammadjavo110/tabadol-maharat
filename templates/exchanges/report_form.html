@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}ثبت گزارش — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        <h1 class="h3 mb-1">ثبت گزارش</h1>
+        <p class="text-muted-2 mb-4">
+          گزارش شما توسط مدیریت بررسی می‌شود. گزارش‌های بی‌دلیل و تکراری ممکن است نادیده گرفته شوند.
+        </p>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <div class="alert alert-info" role="alert">
+              موضوع گزارش:
+              {% if target_skill %}
+                <strong>مهارت «{{ target_skill.title }}»</strong>
+              {% elif target_user %}
+                <strong>کاربر {{ target_user.display_name }}</strong>
+              {% else %}
+                <strong class="text-danger">مشخص نشده است.</strong>
+              {% endif %}
+            </div>
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {% if target_skill %}
+                <input type="hidden" name="skill" value="{{ target_skill.pk }}">
+              {% endif %}
+              {% if target_user %}
+                <input type="hidden" name="target_user" value="{{ target_user.pk }}">
+              {% endif %}
+
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {% for error in form.non_field_errors %}
+                    <span class="d-block">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% include "partials/form_field.html" with field=form.reason %}
+              {% include "partials/form_field.html" with field=form.description %}
+
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger">
+                  <i class="bi bi-flag ms-1" aria-hidden="true"></i>ارسال گزارش
+                </button>
+                <a class="btn btn-outline-secondary" href="{% url 'home' %}">انصراف</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

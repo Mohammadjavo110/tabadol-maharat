@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}{{ exchange.title }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <nav aria-label="مسیر صفحه">
+      <ol class="breadcrumb bg-transparent p-0 small">
+        <li class="breadcrumb-item"><a href="{% url 'exchanges:list' %}">تبادلهای من</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ exchange.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+              <h1 class="h4 mb-0">{{ exchange.title }}</h1>
+              <span class="status-badge status-{{ exchange.status }}">
+                {{ exchange.get_status_display }}
+              </span>
+            </div>
+
+            <p class="mb-3">{{ exchange.description|linebreaksbr }}</p>
+
+            <div class="row g-3 border-top pt-3 small">
+              <div class="col-sm-6">
+                <span class="text-muted-2">درخواست‌کننده:</span>
+                <a href="{% url 'accounts:public_profile' exchange.requester.pk %}">
+                  {{ exchange.requester.display_name }}
+                </a>
+              </div>
+              <div class="col-sm-6">
+                <span class="text-muted-2">ارائه‌دهنده:</span>
+                <a href="{% url 'accounts:public_profile' exchange.provider.pk %}">
+                  {{ exchange.provider.display_name }}
+                </a>
+              </div>
+              <div class="col-sm-6">
+                <span class="text-muted-2">مهارت مورد تقاضا:</span>
+                <a href="{{ exchange.skill.get_absolute_url }}">{{ exchange.skill.title }}</a>
+              </div>
+              <div class="col-sm-6">
+                <span class="text-muted-2">مهارت پیشنهادی:</span>
+                {% if exchange.offered_skill %}
+                  <a href="{{ exchange.offered_skill.get_absolute_url }}">{{ exchange.offered_skill.title }}</a>
+                {% else %}
+                  <span class="text-muted-2">—</span>
+                {% endif %}
+              </div>
+              <div class="col-sm-6">
+                <span class="text-muted-2">ثبت‌شده در:</span>
+                {{ exchange.created_at|date:"Y/m/d — H:i" }}
+              </div>
+              {% if exchange.reviewed_at %}
+                <div class="col-sm-6">
+                  <span class="text-muted-2">بررسی‌شده در:</span>
+                  {{ exchange.reviewed_at|date:"Y/m/d — H:i" }}
+                </div>
+              {% endif %}
+            </div>
+
+            {% if exchange.admin_note %}
+              <div class="alert alert-info mt-3 mb-0" role="alert">
+                <strong>یادداشت مدیر:</strong> {{ exchange.admin_note }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white">
+            <h2 class="h5 mb-0">گفتگو</h2>
+          </div>
+          <div class="card-body">
+            {% if message_list %}
+              <div class="chat-box mb-3">
+                {% for message in message_list %}
+                  <div class="chat-message {% if message.sender_id == user.pk %}mine{% else %}theirs{% endif %}">
+                    {% if message.sender_id != user.pk %}
+                      <strong>{{ message.sender.display_name }}</strong><br>
+                    {% endif %}
+                    {{ message.body|linebreaksbr }}
+                    <span class="chat-time">{{ message.created_at|date:"Y/m/d H:i" }}</span>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="text-muted-2">هنوز پیامی رد و بدل نشده است.</p>
+            {% endif %}
+
+            {% if exchange.can_message %}
+              <form method="post" novalidate>
+                {% csrf_token %}
+                {% for error in form.body.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                <div class="mb-2">
+                  <label class="form-label" for="id_body">پیام شما</label>
+                  <textarea class="form-control" id="id_body" name="body" rows="3" maxlength="2000"
+                            required placeholder="پیام خود را بنویسید…"></textarea>
+                </div>
+                <button type="submit" name="send_message" class="btn btn-primary">
+                  <i class="bi bi-send ms-1" aria-hidden="true"></i>ارسال پیام
+                </button>
+              </form>
+            {% else %}
+              <div class="alert alert-warning mb-0" role="alert">
+                گفتگو برای این درخواست بسته شده است.
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        {% if counterpart %}
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body p-4 text-center">
+              <img class="avatar avatar-md mb-2" src="{{ counterpart.avatar_url }}"
+                   alt="تصویر {{ counterpart.display_name }}">
+              <h2 class="h6 mb-0">
+                <a class="text-body" href="{% url 'accounts:public_profile' counterpart.pk %}">
+                  {{ counterpart.display_name }}
+                </a>
+              </h2>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <h2 class="h6 text-muted-2 mb-3">وضعیت گفتگو</h2>
+            <ol class="list-unstyled small mb-0">
+              <li class="mb-2">
+                <i class="bi bi-check-circle-fill text-success ms-1" aria-hidden="true"></i>
+                ثبت درخواست توسط {{ exchange.requester.display_name }}
+              </li>
+              <li class="mb-2 {% if exchange.status == 'pending' %}text-muted-2{% endif %}">
+                <i class="bi bi-hourglass-split text-warning ms-1" aria-hidden="true"></i>
+                بررسی توسط مدیریت
+              </li>
+              <li class="mb-2 {% if not exchange.is_accepted %}text-muted-2{% endif %}">
+                <i class="bi bi-patch-check ms-1" aria-hidden="true"></i>
+                تأیید نهایی تبادل
+              </li>
+              <li class="{% if exchange.status != 'completed' %}text-muted-2{% endif %}">
+                <i class="bi bi-archive ms-1" aria-hidden="true"></i>
+                ثبت در تاریخچه
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 mt-3">
+          {% if exchange.status == "approved" %}
+            <form method="post">
+              {% csrf_token %}
+              <button type="submit" name="mark_completed" class="btn btn-accent w-100">
+                <i class="bi bi-check2-circle ms-1" aria-hidden="true"></i>تکمیل‌شده علامت بزن
+              </button>
+            </form>
+          {% endif %}
+          {% if user.is_staff %}
+            <a class="btn btn-primary w-100" href="{% url 'exchanges:review' exchange.pk %}">
+              <i class="bi bi-shield-check ms-1" aria-hidden="true"></i>بررسی توسط مدیر
+            </a>
+          {% endif %}
+          <a class="btn btn-outline-secondary w-100" href="{% url 'exchanges:list' %}">
+            بازگشت به فهرست
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

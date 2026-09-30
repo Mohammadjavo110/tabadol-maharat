@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}پروفایل {{ profile_user.display_name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body p-4">
+        <div class="row g-4 align-items-center">
+          <div class="col-md-3 text-center">
+            <img class="avatar avatar-lg" src="{{ profile_user.avatar_url }}"
+                 alt="تصویر پروفایل {{ profile_user.display_name }}">
+          </div>
+          <div class="col-md-9">
+            <h1 class="h3 mb-2">{{ profile_user.display_name }}</h1>
+            <div class="d-flex flex-wrap gap-3 text-muted-2 small mb-3">
+              {% if profile_user.profile.city %}
+                <span><i class="bi bi-geo-alt ms-1" aria-hidden="true"></i>{{ profile_user.profile.city }}</span>
+              {% endif %}
+              <span>
+                <i class="bi bi-calendar3 ms-1" aria-hidden="true"></i>
+                عضویت: {{ profile_user.date_joined|date:"Y/m/d" }}
+              </span>
+            </div>
+            {% if profile_user.profile.bio %}
+              <p class="mb-0">{{ profile_user.profile.bio|linebreaksbr }}</p>
+            {% else %}
+              <p class="text-muted-2 mb-0">این کاربر توضیحی برای پروفایل خود ننوشته است.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">مهارت‌ها و خدمات ({{ skills_count }})</h2>
+
+    {% if skills %}
+      <div class="row g-4">
+        {% for skill in skills %}
+          <div class="col-md-6 col-lg-4">{% include "partials/skill_card.html" %}</div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-inboxes" aria-hidden="true"></i></div>
+        <p class="text-muted-2 mb-0">این کاربر هنوز مهارت فعالی ثبت نکرده است.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

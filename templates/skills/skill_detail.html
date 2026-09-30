@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load skillyar_tags %}
+
+{% block title %}{{ skill.title }} — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ skill.description|truncatewords:25 }}{% endblock %}
+
+{% block content %}
+<section class="section py-4">
+  <div class="container">
+    <nav aria-label="مسیر صفحه">
+      <ol class="breadcrumb bg-transparent p-0 small">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">صفحهٔ اصلی</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'skills:list' %}">مهارت‌ها</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ skill.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <span class="tag tag-type-{{ skill.type }}">{{ skill.get_type_display }}</span>
+              <span class="tag">{{ skill.category.title }}</span>
+              {% if not skill.is_active %}
+                <span class="status-badge status-rejected">غیرفعال</span>
+              {% endif %}
+            </div>
+
+            <h1 class="h3 mb-3">{{ skill.title }}</h1>
+
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <span class="text-muted-2 small">سطح:</span>
+              <span class="level-dots" role="img" aria-label="سطح {{ skill.get_level_display }}">
+                {% for filled in skill.level|level_filled %}
+                  <span class="dot {% if filled %}filled{% endif %}"></span>
+                {% endfor %}
+              </span>
+              <span class="small fw-semibold">{{ skill.get_level_display }}</span>
+            </div>
+
+            <h2 class="h6 text-muted-2">توضیحات</h2>
+            <p class="mb-4" style="line-height: 2;">{{ skill.description|linebreaksbr }}</p>
+
+            {% if skill.tags_list %}
+              <h2 class="h6 text-muted-2">برچسب‌ها</h2>
+              <div class="d-flex flex-wrap gap-1 mb-4">
+                {% for tag in skill.tags_list %}
+                  <a class="tag" href="{% url 'skills:list' %}?q={{ tag|urlencode }}">{{ tag }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="d-flex flex-wrap gap-3 text-muted-2 small border-top pt-3">
+              <span>
+                <i class="bi bi-calendar3 ms-1" aria-hidden="true"></i>
+                ثبت‌شده در {{ skill.created_at|date:"Y/m/d" }}
+              </span>
+              <span>
+                <i class="bi bi-eye ms-1" aria-hidden="true"></i>
+                {{ skill.watchers_count }} دنبال‌کننده
+              </span>
+              <span>
+                <i class="bi bi-arrow-left-right ms-1" aria-hidden="true"></i>
+                {{ skill.exchanges.count }} درخواست تبادل
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {% if similar_skills %}
+          <div class="mt-5">
+            <h2 class="h5 mb-3">مهارت‌های مشابه</h2>
+            <div class="row g-4">
+              {% for item in similar_skills %}
+                <div class="col-md-6 col-xl-4">{% include "partials/skill_card.html" with skill=item %}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-3">
+          <div class="card-body p-4 text-center">
+            <img class="avatar avatar-lg mb-3" src="{{ skill.owner.avatar_url }}"
+                 alt="تصویر {{ skill.owner.display_name }}">
+            <h2 class="h6 mb-1">
+              <a class="text-body" href="{% url 'accounts:public_profile' skill.owner.pk %}">
+                {{ skill.owner.display_name }}
+              </a>
+            </h2>
+            {% if skill.owner.profile.city %}
+              <p class="text-muted-2 small mb-0">
+                <i class="bi bi-geo-alt ms-1" aria-hidden="true"></i>{{ skill.owner.profile.city }}
+              </p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            {% if is_owner %}
+              <p class="text-muted-2 small mb-3">این مورد متعلق به شماست.</p>
+              <div class="d-grid gap-2">
+                <a class="btn btn-primary" href="{% url 'skills:edit' skill.pk %}">
+                  <i class="bi bi-pencil ms-1" aria-hidden="true"></i>ویرایش
+                </a>
+                <a class="btn btn-outline-danger" href="{% url 'skills:delete' skill.pk %}">
+                  <i class="bi bi-trash ms-1" aria-hidden="true"></i>حذف
+                </a>
+              </div>
+            {% elif not user.is_authenticated %}
+              <p class="text-muted-2 small">
+                برای دنبال کردن این مهارت و ارسال درخواست تبادل، وارد شوید.
+              </p>
+              <a class="btn btn-primary w-100" href="{% url 'accounts:login' %}?next={{ request.path }}">
+                ورود به حساب
+              </a>
+            {% else %}
+              <form method="post" action="{% url 'skills:toggle_watch' skill.pk %}" class="mb-3">
+                {% csrf_token %}
+                <button type="submit" class="btn w-100 {% if is_watched %}btn-outline-primary{% else %}btn-primary{% endif %}">
+                  {% if is_watched %}
+                    <i class="bi bi-eye-slash ms-1" aria-hidden="true"></i>لغو دنبال کردن
+                  {% else %}
+                    <i class="bi bi-eye ms-1" aria-hidden="true"></i>دنبال کردن
+                  {% endif %}
+                </button>
+              </form>
+
+              {% if existing_exchange %}
+                <p class="text-muted-2 small mb-2">درخواست تبادل شما برای این مهارت ثبت شده است.</p>
+                <a class="btn btn-outline-primary w-100" href="{{ existing_exchange.get_absolute_url }}">
+                  مشاهدهٔ درخواست
+                </a>
+              {% else %}
+                <a class="btn btn-accent w-100" href="{% url 'exchanges:create' skill.pk %}">
+                  <i class="bi bi-arrow-left-right ms-1" aria-hidden="true"></i>درخواست تبادل
+                </a>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-3">
+          <div class="card-body p-3 text-center">
+            <p class="text-muted-2 small mb-2">این مورد را نامناسب می‌دانید؟</p>
+            <a class="small" href="{% url 'exchanges:report_create' %}?skill={{ skill.pk }}">
+              <i class="bi bi-flag ms-1" aria-hidden="true"></i>گزارش این مورد
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
