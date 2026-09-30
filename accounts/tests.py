@@ -122,6 +122,46 @@ class RegisterViewTests(TestCase):
         self.assertFalse(User.objects.filter(email="weak@test.ir").exists())
 
 
+class RememberMeTests(TestCase):
+    """چک‌باکس «مرا به خاطر بسپار» باید واقعاً نشست را طولانی کند."""
+
+    def setUp(self):
+        self.user = make_user(email="a@test.ir")
+        self.credentials = {"username": "a@test.ir", "password": TEST_PASSWORD}
+
+    def test_without_remember_session_expires_on_close(self):
+        self.client.post(reverse("accounts:login"), self.credentials)
+        self.assertTrue(self.client.session.get_expire_at_browser_close())
+        # get_expiry_age() وقتی مقدار صفر است به‌جایش SESSION_COOKIE_AGE را
+        # برمی‌گرداند، پس مستقیم مقدار ذخیره‌شده را می‌سنجیم.
+        self.assertEqual(self.client.session.get("_session_expiry"), 0)
+
+    def test_with_remember_session_persists(self):
+        self.client.post(reverse("accounts:login"), {**self.credentials, "remember": "1"})
+        self.assertFalse(self.client.session.get_expire_at_browser_close())
+        # چند ثانیه بین ثبت و خواندن می‌گذرد، پس بازه می‌سنجیم نه عدد دقیق
+        self.assertAlmostEqual(
+            self.client.session.get_expiry_age(), 30 * 24 * 60 * 60, delta=120
+        )
+
+    def test_login_page_renders_remember_checkbox(self):
+        response = self.client.get(reverse("accounts:login"))
+        self.assertContains(response, 'name="remember"')
+
+
+class LoginFormTests(TestCase):
+    """فرم ورود باید همان چیزی را بفرستد که ویو می‌خواند."""
+
+    def setUp(self):
+        make_user(email="a@test.ir")
+
+    def test_identifier_and_password_fields_render_with_names(self):
+        html = self.client.get(reverse("accounts:login")).content.decode()
+        for name in ("username", "password"):
+            with self.subTest(field=name):
+                self.assertRegex(html, rf'name="{name}"')
+
+
 class AccessControlTests(TestCase):
     def test_dashboard_requires_login(self):
         response = self.client.get(reverse("accounts:dashboard"))

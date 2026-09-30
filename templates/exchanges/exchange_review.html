@@ -64,16 +64,14 @@
                 <span class="form-label d-block">تصمیم</span>
                 {% for radio in form.action %}
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="{{ radio.data_name }}"
-                           id="{{ radio.id_for_label }}" value="{{ radio.data.value }}"
-                           {% if radio.data.selected %}checked{% endif %}>
+                    {{ radio }}
                     <label class="form-check-label" for="{{ radio.id_for_label }}">
                       {{ radio.data.label }}
                     </label>
                   </div>
                 {% endfor %}
                 {% for error in form.action.errors %}
-                  <span class="field-error">{{ error }}</span>
+                  <span class="field-error" role="alert">{{ error }}</span>
                 {% endfor %}
               </div>
 

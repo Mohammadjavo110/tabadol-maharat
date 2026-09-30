@@ -1,3 +1,5 @@
+import re
+
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
@@ -251,6 +253,58 @@ class AdminReviewTests(TestCase):
         self.exchange.refresh_from_db()
         self.assertEqual(self.exchange.status, ExchangeStatus.REJECTED)
         self.assertEqual(self.exchange.admin_note, "شرح نامناسب.")
+
+    def test_review_form_renders_working_radio_inputs(self):
+        """ورودی‌های رادیویی باید همان نامی را داشته باشند که ویو انتظار دارد."""
+        self.client.force_login(self.admin)
+        html = self.client.get(self.url).content.decode()
+
+        radios = re.findall(r'<input[^>]*type="radio"[^>]*>', html)
+        self.assertTrue(radios, "هیچ ورودی رادیویی رندر نشد")
+
+        for tag in radios:
+            name = re.search(r'name="([^"]*)"', tag)
+            self.assertIsNotNone(name, f"ورودی رادیویی بدون name است: {tag}")
+            self.assertEqual(
+                name.group(1), "action", f"نام فیلد رادیویی اشتباه است: {tag}"
+            )
+            self.assertIsNotNone(re.search(r'value="([^"]*)"', tag))
+
+    def test_decision_submitted_as_browser_sends_it(self):
+        """ارسال دقیقاً همان داده‌ای که از HTML رندرشده استخراج می‌شود."""
+        self.client.force_login(self.admin)
+        html = self.client.get(self.url).content.decode()
+
+        payload = {"admin_note": "تأیید شد."}
+        for tag in re.findall(r'<input[^>]*type="radio"[^>]*>', html):
+            name = re.search(r'name="([^"]*)"', tag).group(1)
+            value = re.search(r'value="([^"]*)"', tag).group(1)
+            if "checked" in tag:
+                payload[name] = value
+
+        self.assertIn("action", payload, "هیچ رادیوی ازپیش‌انتخاب‌شده‌ای پیدا نشد")
+
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, 302, "فرم نامعتبر برگشت — نام فیلد اشتباه است")
+
+        self.exchange.refresh_from_db()
+        self.assertNotEqual(
+            self.exchange.status, ExchangeStatus.PENDING, "تصمیم ثبت نشد"
+        )
+        self.assertEqual(self.exchange.reviewed_by, self.admin)
+        self.assertIsNotNone(self.exchange.reviewed_at)
+        self.assertEqual(self.exchange.admin_note, "تأیید شد.")
+
+    def test_review_form_has_a_safe_default(self):
+        """پیش‌فرض نباید تأیید یا رد باشد تا مدیر اشتباهی چیزی را نبندد."""
+        self.client.force_login(self.admin)
+        html = self.client.get(self.url).content.decode()
+        checked = [
+            re.search(r'value="([^"]*)"', tag).group(1)
+            for tag in re.findall(r'<input[^>]*type="radio"[^>]*>', html)
+            if "checked" in tag
+        ]
+        self.assertEqual(checked, ["review"])
 
 
 class ReportTests(TestCase):

@@ -130,6 +130,8 @@ SUPPORT_PHONE = "۰۲۱-۱۲۳۴۵۶۷۸"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@skillyar.ir"
 
+REMEMBER_ME_DAYS = 30
+
 SECURE_REFERRER_POLICY = "same-origin"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"

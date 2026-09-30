@@ -198,7 +198,10 @@ def exchange_review(request, pk: int):
     exchange = get_object_or_404(
         Exchange.objects.select_related("requester", "provider", "skill"), pk=pk
     )
-    form = ExchangeReviewForm(request.POST or None)
+    if request.method == "POST":
+        form = ExchangeReviewForm(request.POST)
+    else:
+        form = ExchangeReviewForm(initial={"action": "review"})
 
     if request.method == "POST" and form.is_valid():
         action = form.cleaned_data["action"]

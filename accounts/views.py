@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,6 +14,14 @@ from skills.models import Skill, Watch
 User = get_user_model()
 
 
+def _apply_remember_me(request) -> None:
+    """بدون تیک، نشست با بستن مرورگر می‌میرد؛ با تیک، به اندازهٔ تعیین‌شده."""
+    if request.POST.get("remember"):
+        request.session.set_expiry(timedelta(days=settings.REMEMBER_ME_DAYS))
+    else:
+        request.session.set_expiry(0)
+
+
 def register(request):
     if request.user.is_authenticated:
         return redirect("accounts:dashboard")
@@ -19,6 +30,7 @@ def register(request):
     if request.method == "POST" and form.is_valid():
         user = form.save()
         login(request, user)
+        _apply_remember_me(request)
         messages.success(request, f"خوش آمدید {user.display_name}! حساب شما با موفقیت ساخته شد.")
         return redirect("accounts:dashboard")
 
@@ -32,6 +44,7 @@ def login_view(request):
     form = LoginForm(request=request, data=request.POST or None)
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
+        _apply_remember_me(request)
         next_url = request.GET.get("next") or request.POST.get("next")
         return redirect(next_url or "accounts:dashboard")
 
