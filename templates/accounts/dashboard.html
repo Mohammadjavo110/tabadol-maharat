@@ -1,126 +1,96 @@
 {% extends "base.html" %}
+{% load skillyar_tags %}
 
 {% block title %}پنل من — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
 <section class="section py-4">
   <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule mb-4">
       <div>
-        <h1 class="h3 mb-1">سلام، {{ user.display_name }}</h1>
-        <p class="text-muted-2 mb-0">خلاصهٔ وضعیت حساب و فعالیت‌های شما</p>
+        <h1 class="section-title">سلام، {{ user.display_name }}</h1>
+        <p class="section-subtitle">وضعیت حساب و کارهای در جریان تو.</p>
       </div>
-      <a class="btn btn-primary" href="{% url 'skills:create' %}">
-        <i class="bi bi-plus-lg ms-1" aria-hidden="true"></i>ثبت مهارت جدید
-      </a>
+      <a class="btn btn-primary" href="{% url 'skills:create' %}">ثبت مهارت جدید</a>
     </div>
 
-    <div class="row g-3 g-md-4 mb-5">
-      <div class="col-6 col-lg-3">
-        <a class="stat-card d-block" href="{% url 'skills:my_skills' %}">
-          <div class="stat-value">{{ my_skills_count }}</div>
-          <div class="stat-label">مهارت ثبت‌شده ({{ active_skills_count }} فعال)</div>
-        </a>
-      </div>
-      <div class="col-6 col-lg-3">
-        <a class="stat-card d-block" href="{% url 'accounts:watches' %}">
-          <div class="stat-value">{{ watches_count }}</div>
-          <div class="stat-label">مهارت دنبال‌شده</div>
-        </a>
-      </div>
-      <div class="col-6 col-lg-3">
-        <a class="stat-card d-block" href="{% url 'exchanges:sent' %}">
-          <div class="stat-value">{{ sent_count }}</div>
-          <div class="stat-label">درخواست ارسالی</div>
-        </a>
-      </div>
-      <div class="col-6 col-lg-3">
-        <a class="stat-card d-block" href="{% url 'exchanges:received' %}">
-          <div class="stat-value">{{ received_count }}</div>
-          <div class="stat-label">درخواست دریافتی</div>
-        </a>
-      </div>
+    <div class="stat-strip mb-5">
+      <a class="stat-link" href="{% url 'skills:my_skills' %}">
+        <div class="stat-value tnum">{{ my_skills_count }}</div>
+        <div class="stat-label">مهارت ثبت‌شده — {{ active_skills_count }} فعال</div>
+      </a>
+      <a class="stat-link" href="{% url 'accounts:watches' %}">
+        <div class="stat-value tnum">{{ watches_count }}</div>
+        <div class="stat-label">دنبال‌شده</div>
+      </a>
+      <a class="stat-link" href="{% url 'exchanges:sent' %}">
+        <div class="stat-value tnum">{{ sent_count }}</div>
+        <div class="stat-label">درخواست فرستاده</div>
+      </a>
+      <a class="stat-link" href="{% url 'exchanges:received' %}">
+        <div class="stat-value tnum">{{ received_count }}</div>
+        <div class="stat-label">درخواست دریافتی</div>
+      </a>
     </div>
 
     <div class="row g-4">
       <div class="col-lg-7">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h2 class="h5 mb-0">درخواست‌های در انتظار بررسی</h2>
-            <a class="small" href="{% url 'exchanges:list' %}">همهٔ تبادلها</a>
+        <div class="bt-ink">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>در انتظار بررسی</h2>
+            <a class="small" href="{% url 'exchanges:list' %}">همه</a>
           </div>
-          <div class="card-body">
+          <div class="card-body p-0">
             {% if open_exchanges %}
-              <div class="list-group list-group-flush">
-                {% for exchange in open_exchanges %}
-                  <a class="list-group-item list-group-item-action px-0"
-                     href="{{ exchange.get_absolute_url }}">
-                    <div class="d-flex justify-content-between gap-2">
-                      <span class="fw-semibold">{{ exchange.title }}</span>
-                      <span class="status-badge status-{{ exchange.status }}">
-                        {{ exchange.get_status_display }}
-                      </span>
-                    </div>
-                    <small class="text-muted-2">
-                      {{ exchange.requester.display_name }} ⇄ {{ exchange.provider.display_name }}
-                    </small>
-                  </a>
-                {% endfor %}
-              </div>
+              {% for exchange in open_exchanges %}
+                <a class="d-block p-3 border-bottom text-body" href="{{ exchange.get_absolute_url }}">
+                  <div class="d-flex justify-content-between gap-2 flex-wrap">
+                    <span class="fw-600">{{ exchange.title }}</span>
+                    <span class="status-badge status-{{ exchange.status }}">{{ exchange.get_status_display }}</span>
+                  </div>
+                  <small class="ink-3">
+                    {{ exchange.requester.display_name }} و {{ exchange.provider.display_name }}
+                  </small>
+                </a>
+              {% endfor %}
             {% else %}
-              <p class="text-muted-2 mb-0">در حال حاضر درخواست بازی وجود ندارد.</p>
+              <p class="ink-3 m-0 p-3">درخواست بازی نداری.</p>
             {% endif %}
           </div>
         </div>
       </div>
 
       <div class="col-lg-5">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h2 class="h5 mb-0">آخرین اعلان‌ها</h2>
+        <div class="bt-ink">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>آخرین اعلان‌ها</h2>
             <a class="small" href="{% url 'accounts:notifications' %}">همه</a>
           </div>
-          <div class="card-body">
+          <div class="card-body p-0">
             {% if notifications %}
-              <div class="list-group list-group-flush">
-                {% for item in notifications %}
-                  <a class="list-group-item list-group-item-action px-0 {% if not item.is_read %}fw-semibold{% endif %}"
-                     href="{{ item.url|default:'#' }}">
-                    <span>{{ item.text }}</span>
-                    <small class="text-muted-2 d-block">{{ item.created_at|date:"Y/m/d H:i" }}</small>
-                  </a>
-                {% endfor %}
-              </div>
+              {% for item in notifications %}
+                <a class="d-block p-3 border-bottom text-body {% if not item.is_read %}fw-600{% endif %}"
+                   href="{{ item.url|default:'#' }}">
+                  <span class="d-block">{{ item.text }}</span>
+                  <small class="ink-3 tnum">{{ item.created_at|date:"Y/m/d H:i" }}</small>
+                </a>
+              {% endfor %}
             {% else %}
-              <p class="text-muted-2 mb-0">اعلانی ندارید.</p>
+              <p class="ink-3 m-0 p-3">اعلانی نداری.</p>
             {% endif %}
           </div>
         </div>
       </div>
     </div>
 
-    <div class="card border-0 shadow-sm mt-4">
-      <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h2 class="h5 mb-0">آخرین مهارت‌های ثبت‌شدهٔ من</h2>
-        <a class="small" href="{% url 'skills:my_skills' %}">مدیریت مهارت‌ها</a>
+    {% if recent_skills %}
+      <div class="mt-5">
+        <div class="section-rule mb-3">
+          <h2 class="h5 fw-bold mb-0">آخرین ثبت‌های تو</h2>
+        </div>
+        {% include "partials/ledger.html" with skills=recent_skills %}
       </div>
-      <div class="card-body">
-        {% if recent_skills %}
-          <div class="row g-4">
-            {% for skill in recent_skills %}
-              <div class="col-md-6 col-lg-4">{% include "partials/skill_card.html" %}</div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <div class="empty-state">
-            <div class="empty-icon"><i class="bi bi-award" aria-hidden="true"></i></div>
-            <h3 class="h5">هنوز مهارتی ثبت نکرده‌اید</h3>
-            <p class="text-muted-2">برای دیده شدن در نتایج جستجو، اولین مهارت خود را ثبت کنید.</p>
-            <a class="btn btn-primary" href="{% url 'skills:create' %}">ثبت مهارت</a>
-          </div>
-        {% endif %}
-      </div>
-    </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

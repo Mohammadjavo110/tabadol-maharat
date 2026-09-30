@@ -3,7 +3,7 @@
 
 {% block title %}گزارش روزانه — {{ SITE_NAME }}{% endblock %}
 {% block dashboard_title %}گزارش روزانه{% endblock %}
-{% block dashboard_subtitle %}خلاصهٔ فعالیت‌های سامانه در یک روز مشخص{% endblock %}
+{% block dashboard_subtitle %}فعالیت سامانه در یک روز مشخص{% endblock %}
 
 {% block dashboard_actions %}
   <form method="get" class="d-flex gap-2">
@@ -14,88 +14,98 @@
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="row g-3 g-md-4 mb-4">
-  <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div class="stat-value">{{ stats.new_users }}</div>
-      <div class="stat-label">کاربر جدید</div>
-    </div>
+<div class="stat-strip mb-5">
+  <div>
+    <div class="stat-value tnum">{{ stats.new_users }}</div>
+    <div class="stat-label">کاربر تازه</div>
   </div>
-  <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div class="stat-value">{{ stats.new_skills }}</div>
-      <div class="stat-label">مهارت جدید</div>
-    </div>
+  <div>
+    <div class="stat-value tnum">{{ stats.new_skills }}</div>
+    <div class="stat-label">مهارت تازه</div>
   </div>
-  <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div class="stat-value">{{ stats.new_exchanges }}</div>
-      <div class="stat-label">درخواست جدید</div>
-    </div>
+  <div>
+    <div class="stat-value tnum">{{ stats.new_exchanges }}</div>
+    <div class="stat-label">درخواست تازه</div>
   </div>
-  <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div class="stat-value" style="color: var(--color-accent-dark);">{{ stats.approved_today }}</div>
-      <div class="stat-label">تبادل تأییدشده</div>
-    </div>
+  <div>
+    <div class="stat-value tnum">{{ stats.approved_today }}</div>
+    <div class="stat-label">تأییدشده</div>
   </div>
 </div>
 
 <div class="row g-4">
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-header bg-white"><h2 class="h5 mb-0">جزئیات روز {{ day|date:"Y/m/d" }}</h2></div>
-      <div class="card-body">
-        <table class="table align-middle mb-0">
-          <caption class="visually-hidden">جزئیات آمار روز انتخاب‌شده</caption>
-          <tbody>
-            <tr><th scope="row" class="fw-normal">کاربر جدید ثبت‌نام کرده</th><td class="text-end">{{ stats.new_users }}</td></tr>
-            <tr><th scope="row" class="fw-normal">مهارت یا خدمت جدید ثبت شده</th><td class="text-end">{{ stats.new_skills }}</td></tr>
-            <tr><th scope="row" class="fw-normal">درخواست تبادل جدید</th><td class="text-end">{{ stats.new_exchanges }}</td></tr>
-            <tr><th scope="row" class="fw-normal">پیام جدید</th><td class="text-end">{{ stats.new_messages }}</td></tr>
-            <tr><th scope="row" class="fw-normal">درخواست بررسی‌شده توسط مدیر</th><td class="text-end">{{ stats.reviewed_today }}</td></tr>
-            <tr><th scope="row" class="fw-normal">تبادل تأییدشده</th><td class="text-end">{{ stats.approved_today }}</td></tr>
-            <tr><th scope="row" class="fw-normal">گزارش جدید</th><td class="text-end">{{ stats.new_reports }}</td></tr>
-          </tbody>
-        </table>
+    <div class="bt-ink">
+      <div class="card-header"><h2>جزئیات {{ day|date:"Y/m/d" }}</h2></div>
+      <div class="card-body p-0">
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>کاربر تازه ثبت‌نام کرده</span><span class="tnum fw-600">{{ stats.new_users }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>مهارت تازه ثبت شده</span><span class="tnum fw-600">{{ stats.new_skills }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>درخواست تبادل تازه</span><span class="tnum fw-600">{{ stats.new_exchanges }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>پیام تازه</span><span class="tnum fw-600">{{ stats.new_messages }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>درخواست بررسی‌شده</span><span class="tnum fw-600">{{ stats.reviewed_today }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>تبادل تأییدشده</span><span class="tnum fw-600">{{ stats.approved_today }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3">
+          <span>گزارش تازه</span><span class="tnum fw-600">{{ stats.new_reports }}</span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm h-100">
-      <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h2 class="h5 mb-0">آمار کل سامانه</h2>
-        <span class="text-muted-2 small">لحظهٔ فعلی</span>
-      </div>
-      <div class="card-body">
-        <table class="table align-middle mb-0">
-          <caption class="visually-hidden">آمار کلی سامانه</caption>
-          <tbody>
-            <tr><th scope="row" class="fw-normal">کل کاربران</th><td class="text-end">{{ totals.users|intcomma }} <span class="text-muted-2 small">(فعال: {{ totals.active_users }})</span></td></tr>
-            <tr><th scope="row" class="fw-normal">مدیر سیستم</th><td class="text-end">{{ totals.staff_users }}</td></tr>
-            <tr><th scope="row" class="fw-normal">کل مهارت‌ها</th><td class="text-end">{{ totals.skills|intcomma }} <span class="text-muted-2 small">(فعال: {{ totals.active_skills }})</span></td></tr>
-            <tr><th scope="row" class="fw-normal">دسته‌بندی‌ها</th><td class="text-end">{{ totals.categories }}</td></tr>
-            <tr><th scope="row" class="fw-normal">کل تبادلها</th><td class="text-end">{{ totals.exchanges|intcomma }} <span class="text-muted-2 small">(تأییدشده: {{ totals.approved_exchanges }})</span></td></tr>
-            <tr><th scope="row" class="fw-normal">در انتظار بررسی</th><td class="text-end">{{ totals.pending_exchanges }}</td></tr>
-            <tr><th scope="row" class="fw-normal">کل پیام‌ها</th><td class="text-end">{{ totals.messages|intcomma }}</td></tr>
-            <tr><th scope="row" class="fw-normal">گزارش‌های فعال</th><td class="text-end">{{ totals.open_reports }}</td></tr>
-          </tbody>
-        </table>
+    <div class="bt-ink">
+      <div class="card-header"><h2>کل سامانه</h2></div>
+      <div class="card-body p-0">
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>کل کاربران</span>
+          <span class="tnum fw-600">{{ totals.users|intcomma }} <span class="ink-3 small">(فعال {{ totals.active_users }})</span></span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>مدیر سیستم</span><span class="tnum fw-600">{{ totals.staff_users }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>کل مهارت‌ها</span>
+          <span class="tnum fw-600">{{ totals.skills|intcomma }} <span class="ink-3 small">(فعال {{ totals.active_skills }})</span></span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>دسته‌بندی‌ها</span><span class="tnum fw-600">{{ totals.categories }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>کل تبادل‌ها</span>
+          <span class="tnum fw-600">{{ totals.exchanges|intcomma }} <span class="ink-3 small">(تأییدشده {{ totals.approved_exchanges }})</span></span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>در انتظار بررسی</span><span class="tnum fw-600">{{ totals.pending_exchanges }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3 border-bottom">
+          <span>کل پیام‌ها</span><span class="tnum fw-600">{{ totals.messages|intcomma }}</span>
+        </div>
+        <div class="d-flex justify-content-between p-3">
+          <span>گزارش‌های باز</span><span class="tnum fw-600">{{ totals.open_reports }}</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="card border-0 shadow-sm mt-4">
-  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-    <h2 class="h5 mb-0">خروجی متنی گزارش</h2>
-    <span class="text-muted-2 small">
-      همان خروجی که با <code>python manage.py daily_report</code> چاپ می‌شود.
-    </span>
+<div class="bt-ink mt-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h2>خروجی متنی</h2>
+    <span class="ink-3 small">همان چیزی که <code>daily_report</code> چاپ می‌کند</span>
   </div>
   <div class="card-body">
-    <pre class="bg-body-tertiary p-3 rounded" style="white-space: pre-wrap; font-size: 0.85rem;">{{ report_text }}</pre>
+    <pre class="bg-paper p-3 mb-0 border" style="white-space: pre-wrap; font-size: 0.82rem; border-color: var(--rule);">{{ report_text }}</pre>
   </div>
 </div>
 {% endblock %}

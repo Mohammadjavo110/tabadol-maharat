@@ -1,16 +1,16 @@
 {% extends "dashboard/base.html" %}
 
 {% block title %}مدیریت مهارت‌ها — {{ SITE_NAME }}{% endblock %}
-{% block dashboard_title %}مدیریت مهارت‌ها و خدمات{% endblock %}
-{% block dashboard_subtitle %}بررسی، فعال‌سازی یا حذف مهارت‌های ثبت‌شده{% endblock %}
+{% block dashboard_title %}مهارت‌ها و خدمات{% endblock %}
+{% block dashboard_subtitle %}فعال کردن، غیرفعال کردن یا حذف{% endblock %}
 
 {% block dashboard_content %}
 <form method="get" class="filter-panel mb-4">
   <div class="row g-3 align-items-end">
     <div class="col-md-9">
-      <label class="form-label" for="admin-skill-q">جستجو</label>
-      <input type="search" class="form-control" id="admin-skill-q" name="q" value="{{ query }}"
-             placeholder="عنوان مهارت یا ایمیل مالک">
+      <label class="form-label" for="q">جستجو</label>
+      <input type="search" class="form-control" id="q" name="q" value="{{ query }}"
+             placeholder="عنوان یا ایمیل مالک">
     </div>
     <div class="col-md-3">
       <button type="submit" class="btn btn-primary w-100">جستجو</button>
@@ -18,91 +18,81 @@
   </div>
 </form>
 
-<div class="row g-3 g-md-4 mb-4">
-  <div class="col-4">
-    <div class="stat-card">
-      <div class="stat-value">{{ totals.skills }}</div>
-      <div class="stat-label">کل مهارت‌ها</div>
-    </div>
+<div class="stat-strip mb-4">
+  <div>
+    <div class="stat-value tnum">{{ totals.skills }}</div>
+    <div class="stat-label">کل</div>
   </div>
-  <div class="col-4">
-    <div class="stat-card">
-      <div class="stat-value" style="color: var(--color-accent-dark);">{{ totals.active_skills }}</div>
-      <div class="stat-label">فعال</div>
-    </div>
+  <div>
+    <div class="stat-value tnum">{{ totals.active_skills }}</div>
+    <div class="stat-label">فعال</div>
   </div>
-  <div class="col-4">
-    <div class="stat-card">
-      <div class="stat-value" style="color: var(--color-danger);">{{ totals.inactive_skills }}</div>
-      <div class="stat-label">غیرفعال</div>
-    </div>
+  <div>
+    <div class="stat-value tnum">{{ totals.inactive_skills }}</div>
+    <div class="stat-label">غیرفعال</div>
+  </div>
+  <div>
+    <div class="stat-value tnum">{{ totals.categories }}</div>
+    <div class="stat-label">دسته‌بندی</div>
   </div>
 </div>
 
-<div class="card border-0 shadow-sm">
-  <div class="card-body p-0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <caption class="visually-hidden">فهرست مهارت‌های سامانه</caption>
-        <thead class="table-light">
-          <tr>
-            <th scope="col">عنوان</th>
-            <th scope="col">مالک</th>
-            <th scope="col">دسته‌بندی</th>
-            <th scope="col">نوع</th>
-            <th scope="col">سطح</th>
-            <th scope="col" class="text-center">دنبال‌کننده</th>
-            <th scope="col" class="text-center">وضعیت</th>
-            <th scope="col" class="text-center">عملیات</th>
+<div class="bt-ink">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0 dense">
+      <caption class="visually-hidden">فهرست مهارت‌ها</caption>
+      <thead>
+        <tr>
+          <th scope="col">عنوان</th>
+          <th scope="col">مالک</th>
+          <th scope="col">دسته‌بندی</th>
+          <th scope="col">نوع</th>
+          <th scope="col" class="text-center">دنبال‌کننده</th>
+          <th scope="col" class="text-center">وضعیت</th>
+          <th scope="col" class="text-center">عملیات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for skill in page_obj %}
+          <tr {% if not skill.is_active %}style="opacity: .5;"{% endif %}>
+            <td>
+              <a class="fw-600 text-body" href="{{ skill.get_absolute_url }}">{{ skill.title }}</a>
+              <small class="ink-3 d-block tnum">{{ skill.created_at|date:"Y/m/d" }}</small>
+            </td>
+            <td class="small text-nowrap">
+              <a href="{% url 'accounts:public_profile' skill.owner.pk %}">{{ skill.owner.display_name }}</a>
+            </td>
+            <td class="small">{{ skill.category.title }}</td>
+            <td><span class="type-mark type-{{ skill.type }}">{{ skill.get_type_display }}</span></td>
+            <td class="text-center tnum">{{ skill.total_watches }}</td>
+            <td class="text-center">
+              {% if skill.is_active %}
+                <span class="status-badge status-approved">فعال</span>
+              {% else %}
+                <span class="status-badge status-rejected">غیرفعال</span>
+              {% endif %}
+            </td>
+            <td class="text-center text-nowrap">
+              <form method="post" action="{% url 'dashboard:skill_toggle_active' skill.pk %}"
+                    class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                  {% if skill.is_active %}غیرفعال کن{% else %}فعال کن{% endif %}
+                </button>
+              </form>
+              <form method="post" action="{% url 'dashboard:skill_delete' skill.pk %}"
+                    class="d-inline"
+                    onsubmit="return confirm('مهارت «{{ skill.title }}» حذف شود؟');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">حذف</button>
+              </form>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {% for skill in page_obj %}
-            <tr class="{% if not skill.is_active %}opacity-50{% endif %}">
-              <td>
-                <a class="fw-semibold text-body" href="{{ skill.get_absolute_url }}">{{ skill.title }}</a>
-                <small class="text-muted-2 d-block">{{ skill.created_at|date:"Y/m/d" }}</small>
-              </td>
-              <td class="small text-nowrap">
-                <a href="{% url 'accounts:public_profile' skill.owner.pk %}">{{ skill.owner.display_name }}</a>
-              </td>
-              <td class="small">{{ skill.category.title }}</td>
-              <td>
-                <span class="tag tag-type-{{ skill.type }}">{{ skill.get_type_display }}</span>
-              </td>
-              <td class="small text-nowrap">{{ skill.get_level_display }}</td>
-              <td class="text-center">{{ skill.total_watches }}</td>
-              <td class="text-center">
-                {% if skill.is_active %}
-                  <span class="status-badge status-approved">فعال</span>
-                {% else %}
-                  <span class="status-badge status-rejected">غیرفعال</span>
-                {% endif %}
-              </td>
-              <td class="text-center text-nowrap">
-                <form method="post" action="{% url 'dashboard:skill_toggle_active' skill.pk %}"
-                      class="d-inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-outline-secondary">
-                    {% if skill.is_active %}غیرفعال کن{% else %}فعال کن{% endif %}
-                  </button>
-                </form>
-                <form method="post" action="{% url 'dashboard:skill_delete' skill.pk %}"
-                      class="d-inline"
-                      onsubmit="return confirm('مهارت «{{ skill.title }}» حذف شود؟');">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-outline-danger">حذف</button>
-                </form>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="8" class="text-center text-muted-2 py-4">مهارتی یافت نشد.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+        {% empty %}
+          <tr><td colspan="7" class="text-center ink-3 py-4">مهارتی پیدا نشد.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 

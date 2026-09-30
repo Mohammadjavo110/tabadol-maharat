@@ -7,8 +7,8 @@
 {% block dashboard_content %}
 <div class="row justify-content-center">
   <div class="col-lg-6">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body p-4">
+    <div class="bt-ink">
+      <div class="pt-3">
         <form method="post" novalidate>
           {% csrf_token %}
           {% if form.non_field_errors %}
@@ -18,7 +18,7 @@
           {% endif %}
           {% include "partials/form_field.html" with field=form.title %}
           {% include "partials/form_field.html" with field=form.description %}
-          <div class="d-flex gap-2">
+          <div class="d-flex flex-wrap gap-2">
             <button type="submit" class="btn btn-primary">ذخیرهٔ تغییرات</button>
             <a class="btn btn-outline-secondary" href="{% url 'dashboard:categories' %}">انصراف</a>
           </div>

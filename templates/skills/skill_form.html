@@ -7,13 +7,15 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <h1 class="h3 mb-1">{{ page_title }}</h1>
-        <p class="text-muted-2 mb-4">
-          اطلاعات را دقیق بنویسید تا کاربران دیگر بتوانند درخواست تبادل مناسبی ارسال کنند.
-        </p>
+        <div class="section-rule mb-4">
+          <h1 class="section-title">{{ page_title }}</h1>
+          <p class="section-subtitle">
+            هرچه دقیق‌تر بنویسی، درخواستی که می‌گیری به آنچه واقعاً می‌خواهی نزدیک‌تر است.
+          </p>
+        </div>
 
-        <div class="card border-0 shadow-sm">
-          <div class="card-body p-4">
+        <div class="bt-ink">
+          <div class="pt-3">
             <form method="post" novalidate>
               {% csrf_token %}
               {% if form.non_field_errors %}
@@ -32,7 +34,7 @@
               {% include "partials/form_field.html" with field=form.tags %}
               {% include "partials/form_field.html" with field=form.is_active %}
 
-              <div class="d-flex gap-2 mt-4">
+              <div class="d-flex flex-wrap gap-2 mt-4">
                 <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
                 <a class="btn btn-outline-secondary"
                    href="{% if skill %}{{ skill.get_absolute_url }}{% else %}{% url 'skills:my_skills' %}{% endif %}">

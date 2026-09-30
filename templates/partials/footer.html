@@ -2,59 +2,49 @@
   <div class="container">
     <div class="row g-4">
       <div class="col-lg-4">
-        <h5><i class="bi bi-arrow-left-right ms-2" aria-hidden="true"></i>{{ SITE_NAME }}</h5>
-        <p class="mb-0">
-          پلتفرم تبادل مهارت و خدمات؛ مهارت خود را ثبت کنید و در ازای آن
-          خدماتی که نیاز دارید دریافت کنید.
+        <h5>{{ SITE_NAME }}</h5>
+        <p class="mb-0" style="max-width: 40ch;">
+          مهارت خود را ثبت کن و در ازایش چیزی بگیر که واقعاً به آن نیاز داری.
+          بدون پرداخت، فقط تبادل.
         </p>
       </div>
 
       <div class="col-6 col-lg-2">
-        <h5>دسترسی سریع</h5>
+        <h5>دسترسی</h5>
         <ul class="list-unstyled mb-0">
           <li><a href="{% url 'home' %}">صفحهٔ اصلی</a></li>
-          <li><a href="{% url 'skills:list' %}">همهٔ مهارت‌ها</a></li>
-          <li><a href="{% url 'skills:create' %}">ثبت مهارت جدید</a></li>
+          <li><a href="{% url 'skills:list' %}">فهرست مهارت‌ها</a></li>
+          <li><a href="{% url 'skills:create' %}">ثبت مهارت</a></li>
         </ul>
       </div>
 
       <div class="col-6 col-lg-3">
-        <h5>حساب کاربری</h5>
+        <h5>حساب</h5>
         <ul class="list-unstyled mb-0">
           {% if user.is_authenticated %}
             <li><a href="{% url 'accounts:dashboard' %}">پنل من</a></li>
-            <li><a href="{% url 'accounts:profile' %}">پروفایل من</a></li>
-            <li><a href="{% url 'exchanges:history' %}">تاریخچهٔ تبادل</a></li>
+            <li><a href="{% url 'exchanges:history' %}">تبادل‌های من</a></li>
+            <li><a href="{% url 'accounts:profile' %}">پروفایل</a></li>
           {% else %}
-            <li><a href="{% url 'accounts:login' %}">ورود به حساب</a></li>
-            <li><a href="{% url 'accounts:register' %}">ثبت‌نام جدید</a></li>
+            <li><a href="{% url 'accounts:login' %}">ورود</a></li>
+            <li><a href="{% url 'accounts:register' %}">ثبت‌نام</a></li>
           {% endif %}
         </ul>
       </div>
 
       <div class="col-lg-3">
-        <h5>ارتباط با پشتیبانی</h5>
+        <h5>پشتیبانی</h5>
         <ul class="list-unstyled mb-0">
-          <li>
-            <a href="mailto:{{ SUPPORT_EMAIL }}">
-              <i class="bi bi-envelope ms-2" aria-hidden="true"></i>{{ SUPPORT_EMAIL }}
-            </a>
-          </li>
-          <li>
-            <a href="tel:{{ SUPPORT_PHONE }}">
-              <i class="bi bi-telephone ms-2" aria-hidden="true"></i>{{ SUPPORT_PHONE }}
-            </a>
-          </li>
-          <li class="mt-2">
-            <span class="text-white-50">پاسخگویی: شنبه تا چهارشنبه، ۹ تا ۱۷</span>
-          </li>
+          <li><a href="mailto:{{ SUPPORT_EMAIL }}">{{ SUPPORT_EMAIL }}</a></li>
+          <li><a href="tel:{{ SUPPORT_PHONE }}">{{ SUPPORT_PHONE }}</a></li>
+          <li class="mt-2">شنبه تا چهارشنبه، ۹ تا ۱۷</li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2">
-      <span>© ۱۴۰۵ {{ SITE_NAME }} — پروژهٔ درس برنامه‌نویسی وب</span>
-      <span>ساخته‌شده با Django و PostgreSQL</span>
+      <span>© ۱۴۰۵ {{ SITE_NAME }}</span>
+      <span>پروژهٔ درس برنامه‌نویسی وب — Django و PostgreSQL</span>
     </div>
   </div>
 </footer>

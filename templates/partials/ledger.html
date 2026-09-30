@@ -1,0 +1,13 @@
+{% load skillyar_tags %}
+<div class="ledger">
+  <div class="ledger-head">
+    <span>مهارت یا خدمت</span>
+    <span>دسته‌بندی</span>
+    <span>ارائه‌دهنده</span>
+    <span>دنبال‌کننده</span>
+    <span>تاریخ</span>
+  </div>
+  {% for skill in skills %}
+    {% include "partials/ledger_skill.html" %}
+  {% endfor %}
+</div>

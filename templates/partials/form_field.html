@@ -1,3 +1,4 @@
+{% load skillyar_tags %}
 {% if field.field.widget.input_type == "checkbox" %}
   <div class="form-check mb-3">
     {{ field }}
@@ -10,7 +11,7 @@
     </label>
     {{ field }}
     {% if field.help_text %}
-      <div class="form-text" id="{{ field.id_for_label }}-help">{{ field.help_text|safe }}</div>
+      <div class="form-text">{{ field.help_text }}</div>
     {% endif %}
     {% for error in field.errors %}
       <span class="field-error" role="alert">{{ error }}</span>

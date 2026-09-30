@@ -95,6 +95,17 @@ class Exchange(models.Model):
         return self.status in {ExchangeStatus.APPROVED, ExchangeStatus.COMPLETED}
 
     @property
+    def stage_index(self) -> int:
+        """چند گام از چهار گام مسیر تبادل طی شده است (۰ تا ۴)."""
+        return {
+            ExchangeStatus.PENDING: 1,
+            ExchangeStatus.ADMIN_REVIEW: 2,
+            ExchangeStatus.APPROVED: 3,
+            ExchangeStatus.COMPLETED: 4,
+            ExchangeStatus.REJECTED: 2,
+        }.get(self.status, 1)
+
+    @property
     def can_message(self) -> bool:
         return not self.is_final
 

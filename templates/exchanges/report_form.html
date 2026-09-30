@@ -7,13 +7,15 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-7">
-        <h1 class="h3 mb-1">ثبت گزارش</h1>
-        <p class="text-muted-2 mb-4">
-          گزارش شما توسط مدیریت بررسی می‌شود. گزارش‌های بی‌دلیل و تکراری ممکن است نادیده گرفته شوند.
-        </p>
+        <div class="section-rule mb-4">
+          <h1 class="section-title">ثبت گزارش</h1>
+          <p class="section-subtitle">
+            گزارش را مدیریت می‌بیند. گزارش بی‌دلیل یا تکراری نادیده گرفته می‌شود.
+          </p>
+        </div>
 
-        <div class="card border-0 shadow-sm">
-          <div class="card-body p-4">
+        <div class="bt-ink">
+          <div class="pt-3">
             <div class="alert alert-info" role="alert">
               موضوع گزارش:
               {% if target_skill %}
@@ -21,7 +23,7 @@
               {% elif target_user %}
                 <strong>کاربر {{ target_user.display_name }}</strong>
               {% else %}
-                <strong class="text-danger">مشخص نشده است.</strong>
+                <strong class="text-danger">مشخص نشده</strong>
               {% endif %}
             </div>
 
@@ -45,10 +47,8 @@
               {% include "partials/form_field.html" with field=form.reason %}
               {% include "partials/form_field.html" with field=form.description %}
 
-              <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-danger">
-                  <i class="bi bi-flag ms-1" aria-hidden="true"></i>ارسال گزارش
-                </button>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-danger">فرستادن گزارش</button>
                 <a class="btn btn-outline-secondary" href="{% url 'home' %}">انصراف</a>
               </div>
             </form>

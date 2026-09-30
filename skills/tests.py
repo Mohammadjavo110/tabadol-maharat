@@ -167,6 +167,57 @@ class SkillFilterTests(TestCase):
         self.assertContains(response, "آموزش پایتون")
         self.assertNotContains(response, "طراحی لوگو")
 
+    def test_list_renders_a_row_per_skill(self):
+        response = self.client.get(reverse("skills:list"))
+        self.assertEqual(response.content.count(b"ledger-row"), 2)
+        self.assertContains(response, "ledger-head")
+
+
+class LedgerRenderingTests(TestCase):
+    """پارشال سطر دفترچه باید متغیر درست را بگیرد وگرنه بی‌سروصدا خالی رندر می‌شود."""
+
+    def setUp(self):
+        self.owner = make_user(email="owner@test.ir", full_name="سارا محمدی")
+        self.category = make_category("برنامه‌نویسی")
+        self.skill = make_skill(self.owner, self.category, title="آموزش پایتون")
+
+    def test_home_shows_ledger_rows(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "آموزش پایتون")
+        self.assertIn("ledger-row", response.content.decode())
+
+    def test_public_profile_shows_ledger_rows(self):
+        response = self.client.get(reverse("accounts:public_profile", args=[self.owner.pk]))
+        self.assertContains(response, "آموزش پایتون")
+        self.assertIn("ledger-row", response.content.decode())
+
+    def test_dashboard_shows_ledger_rows(self):
+        self.client.force_login(self.owner)
+        response = self.client.get(reverse("accounts:dashboard"))
+        self.assertContains(response, "آموزش پایتون")
+        self.assertIn("ledger-row", response.content.decode())
+
+    def test_my_skills_shows_ledger_rows(self):
+        self.client.force_login(self.owner)
+        response = self.client.get(reverse("skills:my_skills"))
+        self.assertContains(response, "آموزش پایتون")
+        self.assertIn("ledger-row", response.content.decode())
+
+    def test_similar_skills_render(self):
+        other = make_user(email="other@test.ir")
+        make_skill(other, self.category, title="آموزش جنگو")
+        response = self.client.get(reverse("skills:detail", args=[self.skill.pk]))
+        self.assertContains(response, "آموزش جنگو")
+        self.assertContains(response, "مهارت‌های مشابه")
+
+    def test_watches_page_renders_skill_title(self):
+        watcher = make_user(email="watcher@test.ir")
+        Watch.objects.create(user=watcher, skill=self.skill)
+        self.client.force_login(watcher)
+        response = self.client.get(reverse("accounts:watches"))
+        self.assertContains(response, "آموزش پایتون")
+        self.assertIn("ledger-row", response.content.decode())
+
 
 class SuggestionTests(TestCase):
     def setUp(self):

@@ -1,57 +1,49 @@
 {% extends "base.html" %}
+{% load skillyar_tags %}
 
 {% block title %}پروفایل من — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
 <section class="section py-4">
   <div class="container">
-    <h1 class="h3 mb-1">پروفایل من</h1>
-    <p class="text-muted-2 mb-4">اطلاعات شخصی خود را به‌روز نگه دارید.</p>
+    <div class="section-rule mb-4">
+      <h1 class="section-title">پروفایل من</h1>
+      <p class="section-subtitle">این اطلاعات برای بقیه نمایش داده می‌شود.</p>
+    </div>
 
     <div class="row g-4">
       <div class="col-lg-4">
-        <div class="card border-0 shadow-sm text-center">
-          <div class="card-body p-4">
+        <div class="bt-ink">
+          <div class="pt-3 text-center">
             <img class="avatar avatar-lg mb-3" src="{{ user.avatar_url }}"
                  alt="تصویر پروفایل {{ user.display_name }}">
-            <h2 class="h5 mb-1">{{ user.display_name }}</h2>
-            <p class="text-muted-2 small mb-2">{{ user.email }}</p>
-            {% if user.profile.city %}
-              <p class="text-muted-2 small mb-0">
-                <i class="bi bi-geo-alt ms-1" aria-hidden="true"></i>{{ user.profile.city }}
-              </p>
-            {% endif %}
-            <hr>
+            <h2 class="h6 fw-bold mb-1">{{ user.display_name }}</h2>
+            <p class="ink-3 small mb-0">{{ user.email }}</p>
+            <hr style="border-color: var(--rule);">
             <div class="d-flex justify-content-around">
               <div>
-                <div class="fw-bold" style="font-size: 1.4rem;">{{ skills_count }}</div>
-                <div class="text-muted-2 small">مهارت</div>
+                <div class="fw-bold tnum" style="font-size: 1.35rem;">{{ skills_count }}</div>
+                <div class="ink-3 small">مهارت</div>
               </div>
               <div>
-                <div class="fw-bold" style="font-size: 1.4rem;">
-                  {{ user.date_joined|date:"Y/m/d" }}
-                </div>
-                <div class="text-muted-2 small">عضویت</div>
+                <div class="fw-bold tnum" style="font-size: 1.35rem;">{{ user.date_joined|date:"Y/m/d" }}</div>
+                <div class="ink-3 small">عضویت</div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="d-grid gap-2 mt-3">
-          <a class="btn btn-outline-primary" href="{% url 'accounts:password_change' %}">
-            <i class="bi bi-key ms-1" aria-hidden="true"></i>تغییر رمز عبور
-          </a>
-          <a class="btn btn-outline-primary" href="{% url 'accounts:public_profile' user.pk %}">
-            <i class="bi bi-box-arrow-up-left ms-1" aria-hidden="true"></i>مشاهدهٔ پروفایل عمومی
+          <a class="btn btn-outline-ink" href="{% url 'accounts:password_change' %}">تغییر رمز عبور</a>
+          <a class="btn btn-outline-ink" href="{% url 'accounts:public_profile' user.pk %}">
+            دیدن نسخهٔ عمومی
           </a>
         </div>
       </div>
 
       <div class="col-lg-8">
-        <div class="card border-0 shadow-sm">
-          <div class="card-header bg-white">
-            <h2 class="h5 mb-0">ویرایش اطلاعات</h2>
-          </div>
+        <div class="bt-ink">
+          <div class="card-header"><h2>ویرایش اطلاعات</h2></div>
           <div class="card-body">
             <form method="post" enctype="multipart/form-data" novalidate>
               {% csrf_token %}
@@ -61,11 +53,7 @@
               {% include "partials/form_field.html" with field=form.city %}
               {% include "partials/form_field.html" with field=form.bio %}
               {% include "partials/form_field.html" with field=form.avatar %}
-              {% if user.profile.avatar %}
-                <img class="avatar avatar-md mb-3" src="{{ user.profile.avatar.url }}"
-                     alt="تصویر فعلی پروفایل">
-              {% endif %}
-              <button type="submit" class="btn btn-primary">ذخیرهٔ تغییرات</button>
+              <button type="submit" class="btn btn-primary mt-3">ذخیرهٔ تغییرات</button>
             </form>
           </div>
         </div>

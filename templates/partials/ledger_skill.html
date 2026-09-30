@@ -1,0 +1,32 @@
+{% load skillyar_tags %}
+<div class="ledger-row">
+  <div class="ledger-title-cell min-w-0">
+    <span class="type-mark type-{{ skill.type }}">{{ skill.get_type_display }}</span>
+    <div class="ledger-title mt-1">
+      <a class="stretched" href="{{ skill.get_absolute_url }}">{{ skill.title }}</a>
+    </div>
+    <div class="ledger-desc">{{ skill.description|truncatewords:18 }}</div>
+  </div>
+
+  <div class="ledger-cell ledger-level-cell">
+    <span class="level-meter" role="img" aria-label="سطح: {{ skill.get_level_display }}">
+      {% for on in skill.level|level_bars %}<i class="{% if on %}on{% endif %}"></i>{% endfor %}
+    </span>
+    <span class="d-block ledger-cell-num mt-1 ink-3">{{ skill.category.title }}</span>
+  </div>
+
+  <div class="ledger-cell ledger-meta-cell">
+    <a class="ledger-owner above" href="{% url 'accounts:public_profile' skill.owner.pk %}">
+      <img class="avatar avatar-sm" src="{{ skill.owner.avatar_url }}" alt="">
+      <span>{{ skill.owner.display_name }}</span>
+    </a>
+  </div>
+
+  <div class="ledger-cell ledger-cell-num ledger-meta-cell">
+    <span class="ink-3 small">دنبال‌کننده</span><br><span class="tnum">{{ skill.watchers_count }}</span>
+  </div>
+
+  <div class="ledger-cell ledger-cell-num ledger-meta-cell">
+    <span class="ink-3 small">ثبت</span><br><span class="tnum">{{ skill.created_at|date:"Y/m/d" }}</span>
+  </div>
+</div>

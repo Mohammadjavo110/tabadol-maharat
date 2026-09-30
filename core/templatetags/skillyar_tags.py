@@ -15,8 +15,8 @@ def page_url(context, page_number):
 
 
 @register.filter
-def level_filled(level, max_level=5):
-    """لیستی از بولین برمی‌گرداند تا در قالب به‌صورت نقطه‌های سطح رندر شود."""
+def level_bars(level, max_level=5):
+    """لیستی از بولین برمی‌گرداند تا در قالب به‌صورت میلهٔ سطح رندر شود."""
     try:
         value = int(level)
     except (TypeError, ValueError):

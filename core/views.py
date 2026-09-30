@@ -8,8 +8,15 @@ from skills.models import Category, Skill
 
 def home(request):
     latest_skills = Skill.objects.filter(is_active=True).select_related("owner", "category")[:6]
+    live_trade = (
+        Exchange.objects.filter(status=ExchangeStatus.PENDING)
+        .select_related("requester", "provider", "skill", "offered_skill")
+        .order_by("-created_at")
+        .first()
+    )
     context = {
         "latest_skills": latest_skills,
+        "live_trade": live_trade,
         "categories": Category.objects.annotate(skills_count=Count("skills"))[:8],
         "stats": {
             "users": get_user_model().objects.filter(is_active=True).count(),

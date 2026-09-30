@@ -7,37 +7,49 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <h1 class="h3 mb-1">بررسی درخواست تبادل</h1>
-        <p class="text-muted-2 mb-4">
-          این درخواست توسط مدیر سیستم بررسی می‌شود و نتیجه برای هر دو طرف ارسال خواهد شد.
-        </p>
+        <div class="section-rule mb-4">
+          <h1 class="section-title">بررسی درخواست تبادل</h1>
+          <p class="section-subtitle">نتیجه برای هر دو طرف فرستاده می‌شود.</p>
+        </div>
 
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-body p-4">
+        <div class="bt-ink mb-4">
+          <div class="pt-3">
             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-              <h2 class="h5 mb-0">{{ exchange.title }}</h2>
-              <span class="status-badge status-{{ exchange.status }}">
-                {{ exchange.get_status_display }}
-              </span>
+              <h2 class="h5 fw-bold mb-0">{{ exchange.title }}</h2>
+              <span class="status-badge status-{{ exchange.status }}">{{ exchange.get_status_display }}</span>
             </div>
-            <p class="mb-3">{{ exchange.description|linebreaksbr }}</p>
-            <div class="small text-muted-2 border-top pt-3">
-              <div>درخواست‌کننده: <strong>{{ exchange.requester.display_name }}</strong>
-                ({{ exchange.requester.email }})</div>
-              <div>ارائه‌دهنده: <strong>{{ exchange.provider.display_name }}</strong>
-                ({{ exchange.provider.email }})</div>
-              <div class="mt-1">مهارت مورد تقاضا:
-                <a href="{{ exchange.skill.get_absolute_url }}">{{ exchange.skill.title }}</a></div>
+            <p class="prose">{{ exchange.description|linebreaksbr }}</p>
+            <dl class="row g-0 border-top pt-3 mb-0 small">
+              <div class="col-sm-6 py-1">
+                <dt class="ink-3 fw-normal">درخواست‌کننده</dt>
+                <dd class="mb-0">{{ exchange.requester.display_name }} — {{ exchange.requester.email }}</dd>
+              </div>
+              <div class="col-sm-6 py-1">
+                <dt class="ink-3 fw-normal">ارائه‌دهنده</dt>
+                <dd class="mb-0">{{ exchange.provider.display_name }} — {{ exchange.provider.email }}</dd>
+              </div>
+              <div class="col-sm-6 py-1">
+                <dt class="ink-3 fw-normal">مهارت مورد تقاضا</dt>
+                <dd class="mb-0">
+                  <a href="{{ exchange.skill.get_absolute_url }}">{{ exchange.skill.title }}</a>
+                </dd>
+              </div>
               {% if exchange.offered_skill %}
-                <div>مهارت پیشنهادی: {{ exchange.offered_skill.title }}</div>
+                <div class="col-sm-6 py-1">
+                  <dt class="ink-3 fw-normal">مهارت پیشنهادی</dt>
+                  <dd class="mb-0">{{ exchange.offered_skill.title }}</dd>
+                </div>
               {% endif %}
-              <div class="mt-1">تاریخ ثبت: {{ exchange.created_at|date:"Y/m/d — H:i" }}</div>
-            </div>
+              <div class="col-sm-6 py-1">
+                <dt class="ink-3 fw-normal">تاریخ ثبت</dt>
+                <dd class="mb-0 tnum">{{ exchange.created_at|date:"Y/m/d — H:i" }}</dd>
+              </div>
+            </dl>
           </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
-          <div class="card-body p-4">
+        <div class="bt-ink">
+          <div class="pt-3">
             <form method="post" novalidate>
               {% csrf_token %}
               {% if form.non_field_errors %}
@@ -49,7 +61,7 @@
               {% endif %}
 
               <div class="mb-3">
-                <span class="form-label d-block">تصمیم مدیر</span>
+                <span class="form-label d-block">تصمیم</span>
                 {% for radio in form.action %}
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="{{ radio.data_name }}"
@@ -67,10 +79,9 @@
 
               {% include "partials/form_field.html" with field=form.admin_note %}
 
-              <div class="d-flex gap-2 mt-3">
+              <div class="d-flex flex-wrap gap-2 mt-3">
                 <button type="submit" class="btn btn-primary">ثبت تصمیم</button>
-                <a class="btn btn-outline-secondary"
-                   href="{{ exchange.get_absolute_url }}">بازگشت</a>
+                <a class="btn btn-outline-secondary" href="{{ exchange.get_absolute_url }}">برگشت</a>
               </div>
             </form>
           </div>

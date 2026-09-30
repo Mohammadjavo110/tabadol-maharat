@@ -1,61 +1,59 @@
 {% extends "dashboard/base.html" %}
 
 {% block title %}مدیریت گزارش‌ها — {{ SITE_NAME }}{% endblock %}
-{% block dashboard_title %}مدیریت گزارش‌ها{% endblock %}
+{% block dashboard_title %}گزارش‌ها{% endblock %}
 {% block dashboard_subtitle %}گزارش‌های ارسالی کاربران دربارهٔ کاربران و مهارت‌ها{% endblock %}
 
 {% block dashboard_content %}
-<div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-label="فیلتر وضعیت گزارش">
-  <a class="btn btn-sm {% if current_status == 'open' %}btn-primary{% else %}btn-outline-primary{% endif %}"
-     href="?status=open">فعال ({{ totals.open_reports }})</a>
-  <a class="btn btn-sm {% if current_status == 'resolved' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+<div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-label="فیلتر وضعیت">
+  <a class="btn btn-sm {% if current_status == 'open' %}btn-ink{% else %}btn-outline-ink{% endif %}"
+     href="?status=open">باز ({{ totals.open_reports }})</a>
+  <a class="btn btn-sm {% if current_status == 'resolved' %}btn-ink{% else %}btn-outline-ink{% endif %}"
      href="?status=resolved">رسیدگی‌شده</a>
-  <a class="btn btn-sm btn-outline-primary" href="?status=">همه ({{ totals.all_reports }})</a>
+  <a class="btn btn-sm btn-outline-ink" href="?status=">همه ({{ totals.all_reports }})</a>
 </div>
 
 {% if page_obj %}
   <div class="d-flex flex-column gap-3">
     {% for report in page_obj %}
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
+      <div class="bt-ink">
+        <div class="pt-3">
           <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
             <div>
               <span class="status-badge {% if report.status == 'open' %}status-pending{% else %}status-approved{% endif %}">
                 {{ report.get_status_display }}
               </span>
-              <span class="fw-semibold ms-2">{{ report.get_reason_display }}</span>
+              <span class="fw-600 ms-2">{{ report.get_reason_display }}</span>
             </div>
-            <small class="text-muted-2">{{ report.created_at|date:"Y/m/d — H:i" }}</small>
+            <small class="ink-3 tnum">{{ report.created_at|date:"Y/m/d — H:i" }}</small>
           </div>
 
-          <p class="mb-3">{{ report.description|linebreaksbr }}</p>
+          <p class="prose mb-3">{{ report.description|linebreaksbr }}</p>
 
-          <div class="row g-2 small text-muted-2 border-top pt-3">
-            <div class="col-sm-4">گزارش‌دهنده: {{ report.reporter.display_name }}</div>
+          <div class="row g-2 small ink-3 border-top pt-3">
+            <div class="col-sm-4">از {{ report.reporter.display_name }}</div>
             <div class="col-sm-4">
-              موضوع:
+              دربارهٔ
               {% if report.target_user %}
                 <a href="{% url 'accounts:public_profile' report.target_user.pk %}">{{ report.target_user.display_name }}</a>
               {% else %}
                 <a href="{{ report.target_skill.get_absolute_url }}">{{ report.target_skill.title }}</a>
               {% endif %}
             </div>
-            <div class="col-sm-4">
-              {% if report.handled_by %}
-                رسیدگی: {{ report.handled_by.display_name }}
-              {% endif %}
-            </div>
+            {% if report.handled_by %}
+              <div class="col-sm-4">رسیدگی: {{ report.handled_by.display_name }}</div>
+            {% endif %}
           </div>
 
           <form method="post" action="{% url 'dashboard:report_update' report.pk %}" class="mt-3">
             {% csrf_token %}
             {% if report.status == "open" %}
-              <button type="submit" name="action" value="resolve" class="btn btn-sm btn-accent">
-                <i class="bi bi-check2 ms-1" aria-hidden="true"></i>رسیدگی‌شده علامت بزن
+              <button type="submit" name="action" value="resolve" class="btn btn-sm btn-primary">
+                رسیدگی‌شده علامت بزن
               </button>
             {% else %}
               <button type="submit" name="action" value="reopen" class="btn btn-sm btn-outline-secondary">
-                بازگرداندن به فعال
+                برگرداندن به باز
               </button>
             {% endif %}
           </form>
@@ -67,9 +65,9 @@
   <div class="mt-4">{% include "partials/pagination.html" %}</div>
 {% else %}
   <div class="empty-state">
-    <div class="empty-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></div>
-    <h2 class="h5">گزارشی در این وضعیت وجود ندارد</h2>
-    <p class="text-muted-2 mb-0">گزارش‌های ارسالی کاربران در این بخش نمایش داده می‌شود.</p>
+    <div class="empty-icon" aria-hidden="true"><i class="bi bi-shield-check"></i></div>
+    <h2>گزارشی در این وضعیت نیست</h2>
+    <p>گزارش‌های ارسالی کاربران اینجا جمع می‌شود.</p>
   </div>
 {% endif %}
 {% endblock %}

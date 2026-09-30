@@ -17,16 +17,18 @@
           </ol>
         </nav>
 
-        <h1 class="h3 mb-1">ثبت درخواست تبادل</h1>
-        <p class="text-muted-2 mb-4">
-          درخواست شما پس از بررسی مدیریت تأیید می‌شود و سپس در تاریخچهٔ تبادل ثبت می‌گردد.
-        </p>
+        <div class="section-rule mb-4">
+          <h1 class="section-title">ثبت درخواست تبادل</h1>
+          <p class="section-subtitle">
+            درخواستت می‌رود پیش مدیریت. بعد از تأیید، در تاریخچهٔ هر دو طرف ثبت می‌شود.
+          </p>
+        </div>
 
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-body p-4">
-            <h2 class="h6 text-muted-2 mb-3">مهارت مورد درخواست</h2>
-            {% include "partials/skill_card.html" %}
-            <hr>
+        <div class="bt-ink mb-4">
+          <div class="pt-3">
+            <h2 class="h6 small-caps-note mb-3">مورد درخواستی</h2>
+            {% include "partials/ledger_skill.html" %}
+            <hr class="mt-3" style="border-color: var(--rule);">
             <div class="d-flex align-items-center gap-2">
               <img class="avatar avatar-sm" src="{{ provider.avatar_url }}"
                    alt="تصویر {{ provider.display_name }}">
@@ -37,8 +39,8 @@
           </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
-          <div class="card-body p-4">
+        <div class="bt-ink">
+          <div class="pt-3">
             <form method="post" novalidate>
               {% csrf_token %}
               {% if form.non_field_errors %}
@@ -53,10 +55,10 @@
               {% include "partials/form_field.html" with field=form.description %}
               {% include "partials/form_field.html" with field=form.offered_skill %}
 
-              <button type="submit" class="btn btn-primary mt-3">
-                <i class="bi bi-send ms-1" aria-hidden="true"></i>ارسال درخواست
-              </button>
-              <a class="btn btn-outline-secondary" href="{{ skill.get_absolute_url }}">انصراف</a>
+              <div class="d-flex flex-wrap gap-2 mt-3">
+                <button type="submit" class="btn btn-primary">فرستادن درخواست</button>
+                <a class="btn btn-outline-secondary" href="{{ skill.get_absolute_url }}">انصراف</a>
+              </div>
             </form>
           </div>
         </div>

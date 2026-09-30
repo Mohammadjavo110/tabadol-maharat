@@ -5,33 +5,31 @@
 {% block content %}
 <section class="section py-4">
   <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule mb-4">
       <div>
-        <h1 class="h3 mb-1">اعلان‌ها</h1>
-        <p class="text-muted-2 mb-0">
-          {% if unread_count %}{{ unread_count }} اعلان خوانده‌نشده دارید.{% else %}همهٔ اعلان‌ها خوانده شده‌اند.{% endif %}
+        <h1 class="section-title">اعلان‌ها</h1>
+        <p class="section-subtitle">
+          {% if unread_count %}{{ unread_count }} اعلان خوانده‌نشده داری.{% else %}همه خوانده شده‌اند.{% endif %}
         </p>
       </div>
       {% if unread_count %}
         <form method="post">
           {% csrf_token %}
-          <button type="submit" class="btn btn-outline-primary">
-            <i class="bi bi-check2-all ms-1" aria-hidden="true"></i>خواندم، همه خوانده شد
-          </button>
+          <button type="submit" class="btn btn-outline-ink">خواندم، همه خوانده شد</button>
         </form>
       {% endif %}
     </div>
 
     {% if notifications %}
-      <div class="card border-0 shadow-sm">
+      <div class="bt-ink">
         <ul class="list-group list-group-flush">
           {% for item in notifications %}
-            <li class="list-group-item d-flex align-items-start gap-3 {% if not item.is_read %}bg-white{% else %}bg-body-tertiary{% endif %}">
-              <i class="bi {% if not item.is_read %}bi-bell-fill text-primary{% else %}bi-bell text-muted{% endif %} mt-1"
+            <li class="list-group-item d-flex align-items-start gap-3 {% if not item.is_read %}bg-surface fw-600{% endif %}">
+              <i class="bi {% if not item.is_read %}bi-bell-fill{% else %}bi-bell{% endif %} mt-1 {% if not item.is_read %}{% else %}ink-3{% endif %}"
                  aria-hidden="true"></i>
               <div class="flex-grow-1 min-w-0">
                 <a href="{{ item.url|default:'#' }}" class="text-body d-block">{{ item.text }}</a>
-                <small class="text-muted-2">{{ item.created_at|date:"Y/m/d — H:i" }}</small>
+                <small class="ink-3 tnum">{{ item.created_at|date:"Y/m/d — H:i" }}</small>
               </div>
             </li>
           {% endfor %}
@@ -39,9 +37,9 @@
       </div>
     {% else %}
       <div class="empty-state">
-        <div class="empty-icon"><i class="bi bi-bell" aria-hidden="true"></i></div>
-        <h2 class="h5">اعلانی ندارید</h2>
-        <p class="text-muted-2 mb-0">اعلان‌های مربوط به درخواست‌های تبادل اینجا نمایش داده می‌شود.</p>
+        <div class="empty-icon" aria-hidden="true"><i class="bi bi-bell"></i></div>
+        <h2>اعلانی نداری</h2>
+        <p>هرچه دربارهٔ درخواست‌های تبادل اتفاق بیفتد، همین‌جا می‌آید.</p>
       </div>
     {% endif %}
   </div>
