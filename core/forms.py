@@ -35,9 +35,3 @@ class BootstrapFormMixin:
             widget.attrs["class"] = f"{css_class} form-control".strip()
             if name in self.fields and self.fields[name].required is False:
                 widget.attrs.setdefault("aria-describedby", f"{name}-help")
-
-
-def plain_password_field(password_field):
-    """فیلد رمز عبور را بدون نمایش دکمهٔ چشم پیکربندی می‌کند."""
-    password_field.widget.render_value = False
-    return password_field

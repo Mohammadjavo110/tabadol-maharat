@@ -22,10 +22,3 @@ def level_filled(level, max_level=5):
     except (TypeError, ValueError):
         value = 0
     return [index <= value for index in range(1, int(max_level) + 1)]
-
-
-@register.filter
-def get_item(mapping, key):
-    if hasattr(mapping, "get"):
-        return mapping.get(key)
-    return None
