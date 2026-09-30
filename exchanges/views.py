@@ -177,8 +177,8 @@ def exchange_detail(request, pk: int):
             if recipient:
                 Notification.objects.create(
                     user=recipient,
+                    exchange=exchange,
                     text=f"پیام جدید از {request.user.display_name} در «{exchange.title}»",
-                    url=exchange.get_absolute_url(),
                 )
             return redirect("exchanges:detail", pk=exchange.pk)
     else:

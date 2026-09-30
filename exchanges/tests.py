@@ -126,6 +126,48 @@ class NotificationSignalTests(TestCase):
         exchange.save()
         self.assertEqual(Notification.objects.count(), 0)
 
+    def test_notification_links_to_exchange(self):
+        exchange = Exchange.objects.create(
+            requester=self.requester,
+            provider=self.provider,
+            skill=self.skill,
+            title="درخواست",
+            description="توضیحات درخواست برای بررسی توسط مدیریت.",
+        )
+        item = Notification.objects.filter(user=self.provider).first()
+        self.assertEqual(item.exchange, exchange)
+        self.assertEqual(item.link, exchange.get_absolute_url())
+        self.assertTrue(item.has_link)
+
+    def test_deleting_exchange_removes_its_notifications(self):
+        """لینک مرده نباید باقی بماند — اعلان با تبادل پاک می‌شود."""
+        exchange = Exchange.objects.create(
+            requester=self.requester,
+            provider=self.provider,
+            skill=self.skill,
+            title="درخواست",
+            description="توضیحات درخواست برای بررسی توسط مدیریت.",
+        )
+        self.assertTrue(Notification.objects.filter(exchange=exchange).exists())
+        exchange_pk = exchange.pk
+        exchange.delete()
+        self.assertFalse(Notification.objects.filter(exchange_id=exchange_pk).exists())
+
+    def test_notifications_page_has_no_dead_links(self):
+        exchange = Exchange.objects.create(
+            requester=self.requester,
+            provider=self.provider,
+            skill=self.skill,
+            title="درخواست",
+            description="توضیحات درخواست برای بررسی توسط مدیریت.",
+        )
+        Notification.objects.create(user=self.provider, text="بدون تبادل", url="")
+        self.client.force_login(self.provider)
+        response = self.client.get(reverse("accounts:notifications"))
+        self.assertEqual(response.status_code, 200)
+        body = response.content.decode()
+        self.assertIn(exchange.get_absolute_url(), body)
+
 
 class ExchangeViewTests(TestCase):
     def setUp(self):

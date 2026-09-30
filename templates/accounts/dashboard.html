@@ -69,11 +69,18 @@
           <div class="card-body p-0">
             {% if notifications %}
               {% for item in notifications %}
-                <a class="d-block p-3 border-bottom text-body {% if not item.is_read %}fw-600{% endif %}"
-                   href="{{ item.url|default:'#' }}">
-                  <span class="d-block">{{ item.text }}</span>
-                  <small class="ink-3 tnum">{{ item.created_at|date:"Y/m/d H:i" }}</small>
-                </a>
+                {% if item.has_link %}
+                  <a class="d-block p-3 border-bottom text-body {% if not item.is_read %}fw-600{% endif %}"
+                     href="{{ item.link }}">
+                    <span class="d-block">{{ item.text }}</span>
+                    <small class="ink-3 tnum">{{ item.created_at|date:"Y/m/d H:i" }}</small>
+                  </a>
+                {% else %}
+                  <div class="p-3 border-bottom">
+                    <span class="d-block ink-3">{{ item.text }}</span>
+                    <small class="ink-3 tnum">{{ item.created_at|date:"Y/m/d H:i" }}</small>
+                  </div>
+                {% endif %}
               {% endfor %}
             {% else %}
               <p class="ink-3 m-0 p-3">اعلانی نداری.</p>

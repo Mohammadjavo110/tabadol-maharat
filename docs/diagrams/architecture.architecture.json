@@ -1,0 +1,454 @@
+{
+    "schema_version":  1,
+    "diagram_type":  "architecture",
+    "meta":  {
+                 "title":  "معماری سامانهٔ تبادل مهارت — مهارت‌یار",
+                 "output":  "architecture.html",
+                 "quality_profile":  "showcase",
+                 "viewBox":  [
+                                 1200,
+                                 700
+                             ],
+                 "views":  [
+                               {
+                                   "id":  "request-rail",
+                                   "label":  "خط لولهٔ درخواست",
+                                   "focus":  [
+                                                 "browser",
+                                                 "gunicorn",
+                                                 "middleware",
+                                                 "urlconf"
+                                             ],
+                                   "note":  "از مرورگر تا رسیدن درخواست به ویوی هدف، مرحله به مرحله."
+                               },
+                               {
+                                   "id":  "five-apps",
+                                   "label":  "پنج اپ و لایهٔ داده",
+                                   "focus":  [
+                                                 "core_app",
+                                                 "accounts_app",
+                                                 "skills_app",
+                                                 "exchanges_app",
+                                                 "dashboard_app",
+                                                 "orm",
+                                                 "postgres"
+                                             ],
+                                   "note":  "هر اپ چه چیزی را از ORM و PostgreSQL می‌خواند و می‌نویسد."
+                               },
+                               {
+                                   "id":  "presentation-and-files",
+                                   "label":  "ارائه و فایل‌ها",
+                                   "focus":  [
+                                                 "templates",
+                                                 "media",
+                                                 "browser",
+                                                 "orm",
+                                                 "middleware"
+                                             ],
+                                   "note":  "قالب‌ها و فایل‌های ثابت چگونه به مرورگر می‌رسند و آواتار کجا ذخیره می‌شود."
+                               }
+                           ]
+             },
+    "components":  [
+                       {
+                           "id":  "templates",
+                           "type":  "frontend",
+                           "label":  "templates + static",
+                           "sublabel":  "RTL · Bootstrap 5.3",
+                           "pos":  [
+                                       60,
+                                       60
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "browser",
+                           "type":  "external",
+                           "label":  "مرورگر کاربر",
+                           "sublabel":  "مهمان · کاربر · مدیر",
+                           "pos":  [
+                                       290,
+                                       60
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "gunicorn",
+                           "type":  "cloud",
+                           "label":  "Gunicorn",
+                           "sublabel":  "config.wsgi · ۳ ورکر",
+                           "pos":  [
+                                       520,
+                                       60
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "middleware",
+                           "type":  "security",
+                           "label":  "Middleware",
+                           "sublabel":  "۹ لایهٔ Django",
+                           "tag":  "CSRF · WhiteNoise",
+                           "pos":  [
+                                       750,
+                                       60
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "urlconf",
+                           "type":  "backend",
+                           "label":  "config/urls.py",
+                           "sublabel":  "router + admin/",
+                           "tag":  "render → templates/",
+                           "pos":  [
+                                       980,
+                                       60
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "core_app",
+                           "type":  "backend",
+                           "label":  "core",
+                           "sublabel":  "خانه · decorators",
+                           "pos":  [
+                                       60,
+                                       220
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "accounts_app",
+                           "type":  "backend",
+                           "label":  "accounts",
+                           "sublabel":  "User · Profile · auth",
+                           "pos":  [
+                                       250,
+                                       220
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "skills_app",
+                           "type":  "backend",
+                           "label":  "skills",
+                           "sublabel":  "Skill · Watch",
+                           "pos":  [
+                                       440,
+                                       220
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "exchanges_app",
+                           "type":  "backend",
+                           "label":  "exchanges",
+                           "sublabel":  "Exchange · Message",
+                           "pos":  [
+                                       630,
+                                       220
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "dashboard_app",
+                           "type":  "security",
+                           "label":  "dashboard",
+                           "sublabel":  "پنل مدیر",
+                           "tag":  "admin_required",
+                           "pos":  [
+                                       820,
+                                       220
+                                   ],
+                           "size":  [
+                                        150,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "orm",
+                           "type":  "backend",
+                           "label":  "Django ORM",
+                           "sublabel":  "QuerySet · Signals",
+                           "pos":  [
+                                       740,
+                                       400
+                                   ],
+                           "size":  [
+                                        160,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "postgres",
+                           "type":  "database",
+                           "label":  "PostgreSQL 17",
+                           "sublabel":  "webdan · PG17",
+                           "pos":  [
+                                       740,
+                                       540
+                                   ],
+                           "size":  [
+                                        160,
+                                        56
+                                    ]
+                       },
+                       {
+                           "id":  "media",
+                           "type":  "cloud",
+                           "label":  "media/avatars",
+                           "sublabel":  "FileSystemStorage",
+                           "pos":  [
+                                       480,
+                                       540
+                                   ],
+                           "size":  [
+                                        160,
+                                        56
+                                    ]
+                       }
+                   ],
+    "boundaries":  [
+                       {
+                           "kind":  "region",
+                           "label":  "پردازش Django (Gunicorn)",
+                           "wraps":  [
+                                         "templates",
+                                         "gunicorn",
+                                         "middleware",
+                                         "urlconf",
+                                         "core_app",
+                                         "accounts_app",
+                                         "skills_app",
+                                         "exchanges_app",
+                                         "dashboard_app",
+                                         "orm",
+                                         "media"
+                                     ],
+                           "pad":  22
+                       },
+                       {
+                           "kind":  "security-group",
+                           "label":  "نشست · CSRF · هدرهای امن",
+                           "wraps":  [
+                                         "middleware"
+                                     ],
+                           "pad":  16
+                       }
+                   ],
+    "connections":  [
+                        {
+                            "id":  "route-dashboard",
+                            "from":  "urlconf",
+                            "to":  "dashboard_app",
+                            "label":  "/manage-panel/*",
+                            "variant":  "security",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  2
+                        },
+                        {
+                            "id":  "route-exchanges",
+                            "from":  "urlconf",
+                            "to":  "exchanges_app",
+                            "label":  "/exchanges/*",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  2
+                        },
+                        {
+                            "id":  "route-skills",
+                            "from":  "urlconf",
+                            "to":  "skills_app",
+                            "label":  "/skills/*",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  2
+                        },
+                        {
+                            "id":  "route-accounts",
+                            "from":  "urlconf",
+                            "to":  "accounts_app",
+                            "label":  "/accounts/*",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  2
+                        },
+                        {
+                            "id":  "route-home",
+                            "from":  "urlconf",
+                            "to":  "core_app",
+                            "label":  "/ → home",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  2
+                        },
+                        {
+                            "id":  "dashboard-query",
+                            "from":  "dashboard_app",
+                            "to":  "orm",
+                            "label":  "totals · daily_stats",
+                            "variant":  "security",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  1,
+                            "labelDy":  30,
+                            "labelDx":  78
+                        },
+                        {
+                            "id":  "exchanges-query",
+                            "from":  "exchanges_app",
+                            "to":  "orm",
+                            "label":  "Exchange · Message",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  1,
+                            "labelDy":  30,
+                            "labelDx":  -69
+                        },
+                        {
+                            "id":  "skills-query",
+                            "from":  "skills_app",
+                            "to":  "orm",
+                            "label":  "filter_skills · suggest",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  1,
+                            "labelDy":  30,
+                            "labelDx":  -107
+                        },
+                        {
+                            "id":  "accounts-query",
+                            "from":  "accounts_app",
+                            "to":  "orm",
+                            "label":  "User · Profile · Watch",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  1,
+                            "labelDy":  30,
+                            "labelDx":  -186
+                        },
+                        {
+                            "id":  "core-query",
+                            "from":  "core_app",
+                            "to":  "orm",
+                            "label":  "Count · Category",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelSegment":  1,
+                            "labelDy":  30,
+                            "labelDx":  -265
+                        },
+                        {
+                            "id":  "asset-out",
+                            "from":  "templates",
+                            "to":  "browser",
+                            "label":  "HTML/CSS/JS"
+                        },
+                        {
+                            "id":  "http",
+                            "from":  "browser",
+                            "to":  "gunicorn",
+                            "label":  "HTTP",
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "wsgi",
+                            "from":  "gunicorn",
+                            "to":  "middleware",
+                            "label":  "WSGI"
+                        },
+                        {
+                            "id":  "resolve",
+                            "from":  "middleware",
+                            "to":  "urlconf",
+                            "label":  "resolve()"
+                        },
+                        {
+                            "id":  "sql",
+                            "from":  "orm",
+                            "to":  "postgres",
+                            "label":  "SQL · psycopg3",
+                            "variant":  "emphasis",
+                            "fromSide":  "bottom",
+                            "toSide":  "top",
+                            "labelAt":  [
+                                            820,
+                                            498
+                                        ]
+                        },
+                        {
+                            "id":  "avatar",
+                            "from":  "orm",
+                            "to":  "media",
+                            "label":  "آپلود آواتار",
+                            "variant":  "dashed"
+                        }
+                    ],
+    "cards":  [
+                  {
+                      "dot":  "cyan",
+                      "title":  "خط لولهٔ درخواست",
+                      "items":  [
+                                    "Gunicorn تنها نقطهٔ ورود WSGI است و Procfile سه ورکر تعریف می‌کند",
+                                    "۹ لایهٔ میدل‌ور CSRF، کوکی امن و تشخیص پروکسی HTTPS را اعمال می‌کنند",
+                                    "config/urls.py تنها نقطهٔ پخش به پنج اپ و به /admin/ است"
+                                ]
+                  },
+                  {
+                      "dot":  "emerald",
+                      "title":  "پنج اپ، یک دیتابیس",
+                      "items":  [
+                                    "core خانه و ابزار مشترک، accounts احراز هویت، skills فهرست و پیشنهاد، exchanges چرخهٔ تبادل، dashboard پنل مدیر",
+                                    "همهٔ اپ‌ها از یک Django ORM و یک PostgreSQL 17 مشترک استفاده می‌کنند",
+                                    "AUTH_USER_MODEL روی accounts.User سفارشی است و PAGINATE_BY برابر ۱۲"
+                                ]
+                  },
+                  {
+                      "dot":  "amber",
+                      "title":  "ارائه و فایل‌ها",
+                      "items":  [
+                                    "هر ویو با render پایان می‌یابد و قالب‌ها از templates/ و ظاهر از static/css/main.css می‌آید",
+                                    "WhiteNoise فایل‌های ثابت را بدون Nginx سرو می‌کند",
+                                    "آواتارها فقط در media/avatars و از مسیر Profile.avatar می‌روند"
+                                ]
+                  },
+                  {
+                      "dot":  "rose",
+                      "title":  "کنترل دسترسی",
+                      "items":  [
+                                    "دسترسی در سه لایه است: login_required، admin_required و بررسی مالکیت در ویو",
+                                    "کل پنل manage-panel پشت admin_required و بررسی is_staff قرار دارد",
+                                    "X_FRAME_OPTIONS=DENY و escape قالب‌ها مرز امنیتی رندر هستند"
+                                ]
+                  }
+              ]
+}

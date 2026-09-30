@@ -28,7 +28,11 @@
               <i class="bi {% if not item.is_read %}bi-bell-fill{% else %}bi-bell{% endif %} mt-1 {% if not item.is_read %}{% else %}ink-3{% endif %}"
                  aria-hidden="true"></i>
               <div class="flex-grow-1 min-w-0">
-                <a href="{{ item.url|default:'#' }}" class="text-body d-block">{{ item.text }}</a>
+                {% if item.has_link %}
+                  <a href="{{ item.link }}" class="text-body d-block">{{ item.text }}</a>
+                {% else %}
+                  <span class="d-block ink-3">{{ item.text }} (این مورد دیگر موجود نیست)</span>
+                {% endif %}
                 <small class="ink-3 tnum">{{ item.created_at|date:"Y/m/d — H:i" }}</small>
               </div>
             </li>

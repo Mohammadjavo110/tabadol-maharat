@@ -1,0 +1,385 @@
+{
+    "schema_version":  2,
+    "diagram_type":  "workflow",
+    "meta":  {
+                 "title":  "ورک‌فلوی کامل تبادل مهارت",
+                 "output":  "02-workflow.html",
+                 "quality_profile":  "showcase",
+                 "views":  [
+                               {
+                                   "id":  "discovery",
+                                   "label":  "کشف و ثبت درخواست",
+                                   "focus":  [
+                                                 "register",
+                                                 "browse",
+                                                 "detail",
+                                                 "request",
+                                                 "save"
+                                             ],
+                                   "note":  "از ورود کاربر تا ثبت درخواست با وضعیت اولیهٔ pending."
+                               },
+                               {
+                                   "id":  "conversation",
+                                   "label":  "گفتگو و اعلان",
+                                   "focus":  [
+                                                 "save",
+                                                 "notify",
+                                                 "chat",
+                                                 "request"
+                                             ],
+                                   "note":  "پیام‌ها تا پیش از تصمیم نهایی باز می‌مانند و هر تغییر وضعیت اعلان می‌سازد."
+                               },
+                               {
+                                   "id":  "admin-gate",
+                                   "label":  "دروازهٔ مدیر",
+                                   "focus":  [
+                                                 "review",
+                                                 "complete",
+                                                 "history",
+                                                 "guardOwnership",
+                                                 "guardNote",
+                                                 "guardChat"
+                                             ],
+                                   "note":  "تأیید یا رد مدیر سرنوشت تبادل را تعیین می‌کند."
+                               }
+                           ]
+             },
+    "lanes":  [
+                  {
+                      "id":  "member",
+                      "label":  "کاربر / طرف تبادل"
+                  },
+                  {
+                      "id":  "system",
+                      "label":  "سامانه (Django)"
+                  },
+                  {
+                      "id":  "admin",
+                      "label":  "مدیر سیستم"
+                  },
+                  {
+                      "id":  "guard",
+                      "label":  "قواعد و استثناها",
+                      "variant":  "exception"
+                  }
+              ],
+    "phases":  [
+                   {
+                       "id":  "discover",
+                       "label":  "ورود و کشف",
+                       "fromCol":  0,
+                       "toCol":  1
+                   },
+                   {
+                       "id":  "request",
+                       "label":  "درخواست و گفتگو",
+                       "fromCol":  2,
+                       "toCol":  3,
+                       "variant":  "emphasis"
+                   },
+                   {
+                       "id":  "decide",
+                       "label":  "تصمیم مدیر",
+                       "fromCol":  4,
+                       "toCol":  5,
+                       "variant":  "security"
+                   }
+               ],
+    "semanticChecks":  {
+                           "allowedRoots":  [
+                                                "register"
+                                            ],
+                           "allowedTerminals":  [
+                                                    "watch",
+                                                    "chat",
+                                                    "guardOwnership",
+                                                    "guardNote",
+                                                    "guardChat",
+                                                    "history",
+                                                    "complete"
+                                                ],
+                           "requiredEdges":  [
+                                                 {
+                                                     "from":  "save",
+                                                     "to":  "notify"
+                                                 },
+                                                 {
+                                                     "from":  "review",
+                                                     "to":  "history"
+                                                 }
+                                             ],
+                           "requiredPaths":  [
+                                                 {
+                                                     "from":  "register",
+                                                     "to":  "history"
+                                                 }
+                                             ]
+                       },
+    "mainPath":  [
+                     "browse",
+                     "detail",
+                     "request",
+                     "save",
+                     "notify",
+                     "review",
+                     "history"
+                 ],
+    "nodes":  [
+                  {
+                      "id":  "register",
+                      "lane":  "member",
+                      "col":  0,
+                      "width":  146,
+                      "type":  "external",
+                      "label":  "ورود / ثبت‌نام",
+                      "sublabel":  "EmailOrPhoneBackend"
+                  },
+                  {
+                      "id":  "browse",
+                      "lane":  "system",
+                      "col":  0,
+                      "width":  146,
+                      "type":  "frontend",
+                      "label":  "جستجوی مهارت",
+                      "sublabel":  "filter_skills · Paginator"
+                  },
+                  {
+                      "id":  "detail",
+                      "lane":  "system",
+                      "col":  1,
+                      "width":  146,
+                      "type":  "frontend",
+                      "label":  "جزئیات مهارت",
+                      "sublabel":  "similar_skills · suggest"
+                  },
+                  {
+                      "id":  "watch",
+                      "lane":  "member",
+                      "col":  1,
+                      "width":  146,
+                      "type":  "backend",
+                      "label":  "دنبال کردن",
+                      "sublabel":  "Watch · toggle_watch"
+                  },
+                  {
+                      "id":  "request",
+                      "lane":  "member",
+                      "col":  2,
+                      "width":  146,
+                      "type":  "frontend",
+                      "label":  "درخواست تبادل",
+                      "sublabel":  "ExchangeCreateForm"
+                  },
+                  {
+                      "id":  "save",
+                      "lane":  "system",
+                      "col":  2,
+                      "width":  146,
+                      "type":  "backend",
+                      "label":  "ذخیرهٔ pending",
+                      "sublabel":  "clean() · pre_save"
+                  },
+                  {
+                      "id":  "notify",
+                      "lane":  "system",
+                      "col":  3,
+                      "width":  146,
+                      "type":  "messagebus",
+                      "label":  "اعلان به طرفین",
+                      "sublabel":  "Notification · post_save"
+                  },
+                  {
+                      "id":  "chat",
+                      "lane":  "member",
+                      "col":  3,
+                      "width":  146,
+                      "type":  "frontend",
+                      "label":  "گفتگوی دوطرفه",
+                      "sublabel":  "Message · can_message"
+                  },
+                  {
+                      "id":  "review",
+                      "lane":  "admin",
+                      "col":  4,
+                      "width":  146,
+                      "type":  "external",
+                      "label":  "بررسی و تصمیم",
+                      "sublabel":  "ExchangeReviewForm"
+                  },
+                  {
+                      "id":  "complete",
+                      "lane":  "member",
+                      "col":  5,
+                      "width":  146,
+                      "type":  "frontend",
+                      "label":  "تکمیل تبادل",
+                      "sublabel":  "mark_completed"
+                  },
+                  {
+                      "id":  "history",
+                      "lane":  "system",
+                      "col":  5,
+                      "width":  146,
+                      "type":  "frontend",
+                      "label":  "تاریخچهٔ تبادل",
+                      "sublabel":  "approved · completed"
+                  },
+                  {
+                      "id":  "guardOwnership",
+                      "lane":  "guard",
+                      "col":  2,
+                      "width":  146,
+                      "type":  "security",
+                      "label":  "قواعد clean()",
+                      "sublabel":  "نه مهارت خودی، نه خودتان"
+                  },
+                  {
+                      "id":  "guardNote",
+                      "lane":  "guard",
+                      "col":  4,
+                      "width":  146,
+                      "type":  "security",
+                      "label":  "رد ⇒ admin_note",
+                      "sublabel":  "اعتبارنامه نامعتبر"
+                  },
+                  {
+                      "id":  "guardChat",
+                      "lane":  "guard",
+                      "col":  5,
+                      "width":  146,
+                      "type":  "security",
+                      "label":  "بستن گفتگو",
+                      "sublabel":  "is_final = true"
+                  }
+              ],
+    "edges":  [
+                  {
+                      "id":  "e-register-browse",
+                      "from":  "register",
+                      "to":  "browse",
+                      "label":  "ورود موفق",
+                      "role":  "branch",
+                      "variant":  "default"
+                  },
+                  {
+                      "id":  "e-browse-detail",
+                      "from":  "browse",
+                      "to":  "detail",
+                      "label":  "نتایج فیلترشده",
+                      "role":  "main"
+                  },
+                  {
+                      "id":  "e-detail-watch",
+                      "from":  "detail",
+                      "to":  "watch",
+                      "label":  "دنبال کردن",
+                      "role":  "branch",
+                      "variant":  "dashed"
+                  },
+                  {
+                      "id":  "e-detail-request",
+                      "from":  "detail",
+                      "to":  "request",
+                      "label":  "انتخاب مهارت",
+                      "role":  "main"
+                  },
+                  {
+                      "id":  "e-request-save",
+                      "from":  "request",
+                      "to":  "save",
+                      "label":  "POST · اعتبارسنجی",
+                      "role":  "main"
+                  },
+                  {
+                      "id":  "e-save-notify",
+                      "from":  "save",
+                      "to":  "notify",
+                      "label":  "post_save",
+                      "role":  "main"
+                  },
+                  {
+                      "id":  "e-save-guard",
+                      "from":  "save",
+                      "to":  "guardOwnership",
+                      "label":  "نامعتبر ⇒ رد فرم",
+                      "role":  "error",
+                      "variant":  "security"
+                  },
+                  {
+                      "id":  "e-request-chat",
+                      "from":  "request",
+                      "to":  "chat",
+                      "label":  "پیام در گفتگو",
+                      "role":  "branch"
+                  },
+                  {
+                      "id":  "e-notify-review",
+                      "from":  "notify",
+                      "to":  "review",
+                      "label":  "صف بررسی مدیر",
+                      "role":  "main"
+                  },
+                  {
+                      "id":  "e-review-complete",
+                      "from":  "review",
+                      "to":  "complete",
+                      "label":  "approved",
+                      "role":  "branch",
+                      "route":  "bottom-channel",
+                      "fromSide":  "bottom",
+                      "toSide":  "bottom"
+                  },
+                  {
+                      "id":  "e-review-guard",
+                      "from":  "review",
+                      "to":  "guardNote",
+                      "label":  "رد ⇒ یادداشت اجباری",
+                      "role":  "error",
+                      "variant":  "security"
+                  },
+                  {
+                      "id":  "e-review-history",
+                      "from":  "review",
+                      "to":  "history",
+                      "label":  "approved · rejected",
+                      "role":  "main"
+                  },
+                  {
+                      "id":  "e-history-guard",
+                      "from":  "history",
+                      "to":  "guardChat",
+                      "label":  "دیگر پیامی ثبت نمی‌شود",
+                      "role":  "error",
+                      "variant":  "security"
+                  }
+              ],
+    "cards":  [
+                  {
+                      "dot":  "cyan",
+                      "title":  "ورود اختیاری است",
+                      "items":  [
+                                    "مهمان جستجو و جزئیات مهارت را می‌بیند اما ثبت درخواست و گفتگو نیازمند login_required است",
+                                    "ورود با ایمیل یا موبایل و با بک‌اند سفارشی EmailOrPhoneBackend انجام می‌شود",
+                                    "پروفایل هر کاربر با سیگنال post_save به‌صورت خودکار ساخته می‌شود"
+                                ]
+                  },
+                  {
+                      "dot":  "emerald",
+                      "title":  "پیام تا تصمیم باز است",
+                      "items":  [
+                                    "can_message فقط وقتی false است که is_final باشد یعنی approved یا rejected یا completed",
+                                    "هر پیام جدید برای طرف مقابل یک Notification می‌سازد",
+                                    "تغییر وضعیت در post_save با مقایسهٔ وضعیت قبلی برای هر دو طرف اعلان می‌فرستد"
+                                ]
+                  },
+                  {
+                      "dot":  "rose",
+                      "title":  "تأیید مدیر شرط تکمیل است",
+                      "items":  [
+                                    "فقط تبادل approved قابل تکمیل شدن است و در غیر این صورت پیام خطا می‌گیرد",
+                                    "رد درخواست بدون admin_note توسط فرم غیرممکن است",
+                                    "نتیجهٔ تأییدشده یا تکمیل‌شده در تاریخچهٔ تبادل کاربر ثبت می‌شود"
+                                ]
+                  }
+              ]
+}

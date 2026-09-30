@@ -232,6 +232,14 @@ class Notification(models.Model):
         related_name="notifications",
         verbose_name="کاربر",
     )
+    exchange = models.ForeignKey(
+        "exchanges.Exchange",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="notifications",
+        verbose_name="تبادل مرتبط",
+    )
     text = models.CharField("متن", max_length=255)
     url = models.CharField("نشانی", max_length=255, blank=True)
     is_read = models.BooleanField("خوانده شده", default=False)
@@ -245,3 +253,16 @@ class Notification(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} ← {self.text}"
+
+    @property
+    def link(self) -> str:
+        """نشانی امن. اگر تبادل مرتبط حذف شده باشد، لینک مرده نمی‌سازیم."""
+        if self.exchange_id:
+            return self.exchange.get_absolute_url()
+        if self.exchange_id is None and self.url.startswith("/exchanges/"):
+            return ""
+        return self.url or ""
+
+    @property
+    def has_link(self) -> bool:
+        return bool(self.link)
