@@ -1,0 +1,256 @@
+{
+    "schema_version":  1,
+    "diagram_type":  "sequence",
+    "meta":  {
+                 "title":  "چرخهٔ یک درخواست: تأیید یا رد تبادل توسط مدیر",
+                 "output":  "04-sequence.html",
+                 "quality_profile":  "showcase",
+                 "column_fit":  "spread",
+                 "views":  [
+                               {
+                                   "id":  "entry",
+                                   "label":  "ورود و کنترل دسترسی",
+                                   "focus":  [
+                                                 "browser",
+                                                 "stack",
+                                                 "urlconf",
+                                                 "view"
+                                             ],
+                                   "note":  "از درخواست POST تا عبور از resolve و دکوراتور admin_required."
+                               },
+                               {
+                                   "id":  "persist",
+                                   "label":  "ذخیره و اعلان",
+                                   "focus":  [
+                                                 "view",
+                                                 "orm",
+                                                 "postgres"
+                                             ],
+                                   "note":  "وضعیت عوض می‌شود و سیگنال‌های pre_save و post_save کار می‌کنند."
+                               },
+                               {
+                                   "id":  "render",
+                                   "label":  "رندر و پاسخ",
+                                   "focus":  [
+                                                 "orm",
+                                                 "view",
+                                                 "template",
+                                                 "browser"
+                                             ],
+                                   "note":  "قالب رندر و کاربر به صفحهٔ جزئیات تبادل برمی‌گردد."
+                               }
+                           ],
+                 "viewBox":  [
+                                 1320,
+                                 600
+                             ]
+             },
+    "participants":  [
+                         {
+                             "id":  "browser",
+                             "type":  "external",
+                             "label":  "مدیر سیستم"
+                         },
+                         {
+                             "id":  "stack",
+                             "type":  "cloud",
+                             "label":  "Gunicorn + Middleware"
+                         },
+                         {
+                             "id":  "urlconf",
+                             "type":  "backend",
+                             "label":  "config/urls.py"
+                         },
+                         {
+                             "id":  "view",
+                             "type":  "backend",
+                             "label":  "exchange_review"
+                         },
+                         {
+                             "id":  "orm",
+                             "type":  "backend",
+                             "label":  "ORM + signals"
+                         },
+                         {
+                             "id":  "postgres",
+                             "type":  "database",
+                             "label":  "PostgreSQL 17"
+                         },
+                         {
+                             "id":  "template",
+                             "type":  "frontend",
+                             "label":  "templates/"
+                         }
+                     ],
+    "segments":  [
+                     {
+                         "from":  156,
+                         "to":  242,
+                         "label":  "۱ · درخواست تا ویو"
+                     },
+                     {
+                         "from":  248,
+                         "to":  344,
+                         "label":  "۲ · وضعیت قبلی و ذخیره"
+                     },
+                     {
+                         "from":  350,
+                         "to":  412,
+                         "label":  "۳ · اعلان با سیگنال"
+                     },
+                     {
+                         "from":  418,
+                         "to":  508,
+                         "label":  "۴ · رندر و پاسخ"
+                     }
+                 ],
+    "messages":  [
+                     {
+                         "id":  "m-post",
+                         "from":  "browser",
+                         "to":  "stack",
+                         "y":  160,
+                         "label":  "POST /exchanges/5/review/",
+                         "variant":  "emphasis"
+                     },
+                     {
+                         "id":  "m-resolve",
+                         "from":  "stack",
+                         "to":  "urlconf",
+                         "y":  194,
+                         "label":  "resolve(path_info) + بررسی CSRF",
+                         "variant":  "security"
+                     },
+                     {
+                         "id":  "m-dispatch",
+                         "from":  "urlconf",
+                         "to":  "view",
+                         "y":  228,
+                         "label":  "exchange_review · admin_required",
+                         "variant":  "security"
+                     },
+                     {
+                         "id":  "m-pre-save",
+                         "from":  "view",
+                         "to":  "orm",
+                         "y":  262,
+                         "label":  "pre_save: خواندن _previous_status",
+                         "variant":  "security"
+                     },
+                     {
+                         "id":  "m-select",
+                         "from":  "orm",
+                         "to":  "postgres",
+                         "y":  296,
+                         "label":  "SELECT status FROM exchanges pk=5"
+                     },
+                     {
+                         "id":  "m-assign",
+                         "from":  "view",
+                         "to":  "orm",
+                         "y":  330,
+                         "label":  "status · admin_note · reviewed_by"
+                     },
+                     {
+                         "id":  "m-update",
+                         "from":  "orm",
+                         "to":  "postgres",
+                         "y":  364,
+                         "label":  "UPDATE exchanges سپس INSERT notifications ×۲",
+                         "variant":  "emphasis"
+                     },
+                     {
+                         "id":  "m-rows",
+                         "from":  "postgres",
+                         "to":  "orm",
+                         "y":  398,
+                         "label":  "۳ سطر",
+                         "variant":  "return"
+                     },
+                     {
+                         "id":  "m-saved",
+                         "from":  "orm",
+                         "to":  "view",
+                         "y":  432,
+                         "label":  "post_save: اعلان به هر دو طرف",
+                         "variant":  "return"
+                     },
+                     {
+                         "id":  "m-render",
+                         "from":  "view",
+                         "to":  "template",
+                         "y":  466,
+                         "label":  "render(exchange_review.html)"
+                     },
+                     {
+                         "id":  "m-redirect",
+                         "from":  "template",
+                         "to":  "browser",
+                         "y":  500,
+                         "label":  "۳۰۲ → exchanges:detail",
+                         "variant":  "return"
+                     }
+                 ],
+    "activations":  [
+                        {
+                            "participant":  "browser",
+                            "from":  158,
+                            "to":  508,
+                            "type":  "external"
+                        },
+                        {
+                            "participant":  "stack",
+                            "from":  172,
+                            "to":  208,
+                            "type":  "cloud"
+                        },
+                        {
+                            "participant":  "urlconf",
+                            "from":  182,
+                            "to":  242,
+                            "type":  "backend"
+                        },
+                        {
+                            "participant":  "view",
+                            "from":  220,
+                            "to":  480,
+                            "type":  "backend"
+                        },
+                        {
+                            "participant":  "orm",
+                            "from":  252,
+                            "to":  446,
+                            "type":  "backend"
+                        },
+                        {
+                            "participant":  "postgres",
+                            "from":  286,
+                            "to":  412,
+                            "type":  "database"
+                        },
+                        {
+                            "participant":  "template",
+                            "from":  460,
+                            "to":  508,
+                            "type":  "frontend"
+                        }
+                    ],
+    "cards":  [
+                  {
+                      "dot":  "cyan",
+                      "title":  "کنترل دسترسی سه لایه",
+                      "items":  [
+                                    "admin_required در core/decorators.py مسیر غیرstaff را به accounts:dashboard برمی‌گرداند",
+                                    "ExchangeReviewForm در exchanges/forms.py تصمیم و یادداشت مدیر را می‌گیرد و رد بدون admin_note نامعتبر است"
+                                ]
+                  },
+                  {
+                      "dot":  "amber",
+                      "title":  "سیگنال، نه کد ویو",
+                      "items":  [
+                                    "pre_save در exchanges/signals.py وضعیت قبلی را در _previous_status نگه می‌دارد",
+                                    "post_save فقط در صورت تغییر واقعی وضعیت برای هر دو طرف Notification می‌سازد"
+                                ]
+                  }
+              ]
+}

@@ -1,0 +1,158 @@
+{
+    "schema_version":  1,
+    "diagram_type":  "lifecycle",
+    "meta":  {
+                 "title":  "چرخهٔ عمر وضعیت درخواست تبادل (Exchange.status)",
+                 "output":  "03-lifecycle.html",
+                 "quality_profile":  "showcase",
+                 "views":  [
+                               {
+                                   "id":  "main-rail",
+                                   "label":  "مسیر اصلی وضعیت",
+                                   "focus":  [
+                                                 "pending",
+                                                 "adminReview",
+                                                 "approved",
+                                                 "completed"
+                                             ],
+                                   "note":  "مسیر اصلی از ثبت درخواست تا تکمیل شدن تبادل."
+                               },
+                               {
+                                   "id":  "admin-gate",
+                                   "label":  "دروازهٔ تصمیم مدیر",
+                                   "focus":  [
+                                                 "adminReview",
+                                                 "approved",
+                                                 "rejected"
+                                             ],
+                                   "note":  "تصمیم مدیر تعیین می‌کند تبادل تأیید شود یا رد و پرونده بسته شود."
+                               },
+                               {
+                                   "id":  "signals",
+                                   "label":  "اعلان و تاریخچه",
+                                   "focus":  [
+                                                 "pending",
+                                                 "completed",
+                                                 "rejected"
+                                             ],
+                                   "note":  "هر تغییر وضعیت با post_save اعلان می‌سازد و نتیجه در تاریخچه ثبت می‌شود."
+                               }
+                           ],
+                 "viewBox":  [
+                                 1085,
+                                 632
+                             ]
+             },
+    "lanes":  [
+                  {
+                      "id":  "main",
+                      "label":  "مقادیر مجاز فیلد Exchange.status"
+                  }
+              ],
+    "states":  [
+                   {
+                       "id":  "pending",
+                       "type":  "start",
+                       "label":  "ثبت درخواست",
+                       "sublabel":  "status = pending",
+                       "lane":  "main",
+                       "col":  0,
+                       "step":  "01",
+                       "tag":  "اعلان به provider"
+                   },
+                   {
+                       "id":  "adminReview",
+                       "type":  "waiting",
+                       "label":  "در حال بررسی",
+                       "sublabel":  "status = admin_review",
+                       "lane":  "main",
+                       "col":  1,
+                       "step":  "02",
+                       "tag":  "در صف مدیر"
+                   },
+                   {
+                       "id":  "approved",
+                       "type":  "success",
+                       "label":  "تأییدشده",
+                       "sublabel":  "status = approved",
+                       "lane":  "main",
+                       "col":  2,
+                       "step":  "03",
+                       "tag":  "reviewed_at ثبت می‌شود"
+                   },
+                   {
+                       "id":  "completed",
+                       "type":  "success",
+                       "label":  "تکمیل‌شده",
+                       "sublabel":  "status = completed",
+                       "lane":  "main",
+                       "col":  3,
+                       "step":  "04",
+                       "tag":  "در تاریخچهٔ تبادل"
+                   },
+                   {
+                       "id":  "rejected",
+                       "type":  "failure",
+                       "label":  "ردشده",
+                       "sublabel":  "status = rejected",
+                       "lane":  "main",
+                       "col":  4,
+                       "step":  "05",
+                       "tag":  "admin_note اجباری"
+                   }
+               ],
+    "transitions":  [
+                        {
+                            "id":  "t-start",
+                            "from":  "pending",
+                            "to":  "adminReview",
+                            "label":  "شروع بررسی",
+                            "route":  "bottom-channel",
+                            "channelY":  232
+                        },
+                        {
+                            "id":  "t-approve",
+                            "from":  "adminReview",
+                            "to":  "approved",
+                            "label":  "approve",
+                            "variant":  "emphasis",
+                            "route":  "bottom-channel",
+                            "channelY":  264
+                        },
+                        {
+                            "id":  "t-complete",
+                            "from":  "approved",
+                            "to":  "completed",
+                            "label":  "mark_completed",
+                            "variant":  "emphasis",
+                            "route":  "bottom-channel",
+                            "channelY":  296
+                        },
+                        {
+                            "id":  "t-reject",
+                            "from":  "adminReview",
+                            "to":  "rejected",
+                            "label":  "reject",
+                            "variant":  "security",
+                            "route":  "top-channel"
+                        }
+                    ],
+    "cards":  [
+                  {
+                      "dot":  "emerald",
+                      "title":  "وضعیت فقط یک فیلد است",
+                      "items":  [
+                                    "Exchange.status یک CharField با همین پنج مقدار است",
+                                    "is_final یعنی approved یا rejected یا completed"
+                                ]
+                  },
+                  {
+                      "dot":  "amber",
+                      "title":  "اعلان خودکار",
+                      "items":  [
+                                    "pre_save وضعیت قبلی را نگه می‌دارد و post_save فقط در صورت تغییر واقعی اعلان می‌سازد",
+                                    "نتیجهٔ نهایی در تاریخچهٔ تبادل ثبت می‌شود"
+                                ]
+                  }
+              ]
+}

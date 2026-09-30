@@ -3,49 +3,47 @@
 {% block title %}اعلان‌ها — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<section class="section py-4">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule mb-4">
-      <div>
-        <h1 class="section-title">اعلان‌ها</h1>
-        <p class="section-subtitle">
-          {% if unread_count %}{{ unread_count }} اعلان خوانده‌نشده داری.{% else %}همه خوانده شده‌اند.{% endif %}
-        </p>
-      </div>
-      {% if unread_count %}
-        <form method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-outline-ink">خواندم، همه خوانده شد</button>
-        </form>
-      {% endif %}
+<section class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule">
+    <div>
+      <h1 class="section-title">اعلان‌ها</h1>
+      <p class="section-subtitle">
+        {% if unread_count %}{{ unread_count }} اعلان خوانده‌نشده داری.{% else %}همه خوانده شده‌اند.{% endif %}
+      </p>
     </div>
-
-    {% if notifications %}
-      <div class="bt-ink">
-        <ul class="list-group list-group-flush">
-          {% for item in notifications %}
-            <li class="list-group-item d-flex align-items-start gap-3 {% if not item.is_read %}bg-surface fw-600{% endif %}">
-              <i class="bi {% if not item.is_read %}bi-bell-fill{% else %}bi-bell{% endif %} mt-1 {% if not item.is_read %}{% else %}ink-3{% endif %}"
-                 aria-hidden="true"></i>
-              <div class="flex-grow-1 min-w-0">
-                {% if item.has_link %}
-                  <a href="{{ item.link }}" class="text-body d-block">{{ item.text }}</a>
-                {% else %}
-                  <span class="d-block ink-3">{{ item.text }} (این مورد دیگر موجود نیست)</span>
-                {% endif %}
-                <small class="ink-3 tnum">{{ item.created_at|date:"Y/m/d — H:i" }}</small>
-              </div>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% else %}
-      <div class="empty-state">
-        <div class="empty-icon" aria-hidden="true"><i class="bi bi-bell"></i></div>
-        <h2>اعلانی نداری</h2>
-        <p>هرچه دربارهٔ درخواست‌های تبادل اتفاق بیفتد، همین‌جا می‌آید.</p>
-      </div>
+    {% if unread_count %}
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-glass">خواندم، همه خوانده شد</button>
+      </form>
     {% endif %}
   </div>
+
+  {% if notifications %}
+    <div class="card mt-4">
+      <ul class="list-group list-group-flush">
+        {% for item in notifications %}
+          <li class="list-group-item d-flex align-items-start gap-3 {% if not item.is_read %}fw-600{% endif %}">
+            <i class="bi {% if not item.is_read %}bi-bell-fill{% else %}bi-bell{% endif %} mt-1 {% if not item.is_read %}text-primary{% else %}ink-3{% endif %}"
+               aria-hidden="true"></i>
+            <div class="flex-grow-1 min-w-0">
+              {% if item.has_link %}
+                <a href="{{ item.link }}" class="text-body d-block">{{ item.text }}</a>
+              {% else %}
+                <span class="d-block ink-3">{{ item.text }} (این مورد دیگر موجود نیست)</span>
+              {% endif %}
+              <small class="ink-2 tnum">{{ item.created_at|date:"Y/m/d — H:i" }}</small>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="empty-state mt-4">
+      <div class="empty-icon" aria-hidden="true"><i class="bi bi-bell"></i></div>
+      <h2>اعلانی نداری</h2>
+      <p>هرچه دربارهٔ درخواست‌های تبادل اتفاق بیفتد، همین‌جا می‌آید.</p>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

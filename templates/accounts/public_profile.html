@@ -1,47 +1,45 @@
 {% extends "base.html" %}
 {% load skillyar_tags %}
 
-{% block title %}پروفایل {{ profile_user.display_name }} — {{ SITE_NAME }}{% endblock %}
+{% block title %}{{ profile_user.display_name }} — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<section class="section py-4">
-  <div class="container">
-    <div class="bt-ink mb-5">
-      <div class="pt-3">
-        <div class="row g-4 align-items-center">
-          <div class="col-md-2 text-center">
-            <img class="avatar avatar-lg" src="{{ profile_user.avatar_url }}"
-                 alt="تصویر {{ profile_user.display_name }}">
-          </div>
-          <div class="col-md-10">
-            <h1 class="h3 fw-bold mb-2">{{ profile_user.display_name }}</h1>
-            <div class="d-flex flex-wrap gap-3 ink-3 small mb-3">
-              {% if profile_user.profile.city %}<span>{{ profile_user.profile.city }}</span>{% endif %}
-              <span class="tnum">عضو از {{ profile_user.date_joined|date:"Y/m/d" }}</span>
-            </div>
-            {% if profile_user.profile.bio %}
-              <p class="prose mb-0 ink-2">{{ profile_user.profile.bio|linebreaksbr }}</p>
-            {% else %}
-              <p class="mb-0 ink-3">این کاربر توضیحی برای خودش ننوشته.</p>
-            {% endif %}
-          </div>
+<section class="container py-4">
+  <div class="glass p-4 mb-4">
+    <div class="row g-4 align-items-center">
+      <div class="col-md-2 text-center">
+        <img class="avatar avatar-lg" src="{{ profile_user.avatar_url }}"
+             alt="تصویر {{ profile_user.display_name }}">
+      </div>
+      <div class="col-md-10">
+        <h1 class="h3 fw-bold mb-2">{{ profile_user.display_name }}</h1>
+        <div class="d-flex flex-wrap gap-3 ink-2 small mb-3">
+          {% if profile_user.profile.city %}<span>{{ profile_user.profile.city }}</span>{% endif %}
+          <span class="tnum">عضو از {{ profile_user.date_joined|date:"Y/m/d" }}</span>
         </div>
+        {% if profile_user.profile.bio %}
+          <p class="prose mb-0 ink-2">{{ profile_user.profile.bio|linebreaksbr }}</p>
+        {% else %}
+          <p class="mb-0 ink-3">این کاربر توضیحی برای خودش ننوشته.</p>
+        {% endif %}
       </div>
     </div>
-
-    <div class="section-rule mb-3">
-      <h2 class="h5 fw-bold mb-0">مهارت‌ها و خدمات <span class="ink-3 tnum">({{ skills_count }})</span></h2>
-    </div>
-
-    {% if skills %}
-      {% include "partials/ledger.html" %}
-    {% else %}
-      <div class="empty-state">
-        <div class="empty-icon" aria-hidden="true"><i class="bi bi-inboxes"></i></div>
-        <h2>هنوز چیزی ثبت نکرده</h2>
-        <p>وقتی مهارتی ثبت کند، اینجا دیده می‌شود.</p>
-      </div>
-    {% endif %}
   </div>
+
+  <div class="section-rule">
+    <h2 class="h5 fw-bold mb-0">
+      مهارت‌ها و خدمات <span class="ink-3 tnum">({{ skills_count }})</span>
+    </h2>
+  </div>
+
+  {% if skills %}
+    {% include "partials/ledger.html" %}
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon" aria-hidden="true"><i class="bi bi-inboxes"></i></div>
+      <h2>هنوز چیزی ثبت نکرده</h2>
+      <p>وقتی مهارتی ثبت کند، اینجا دیده می‌شود.</p>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

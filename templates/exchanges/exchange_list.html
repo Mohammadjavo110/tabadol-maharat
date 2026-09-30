@@ -3,70 +3,68 @@
 {% block title %}{{ page_title }} — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<section class="section py-4">
-  <div class="container">
-    <div class="section-rule mb-4">
-      <h1 class="section-title">{{ page_title }}</h1>
-      <p class="section-subtitle">{{ page_subtitle }}</p>
+<section class="container py-4">
+  <div class="section-rule">
+    <h1 class="section-title">{{ page_title }}</h1>
+    <p class="section-subtitle">{{ page_subtitle }}</p>
+  </div>
+
+  {% if not is_history %}
+    <div class="d-flex flex-wrap gap-2 my-3" role="group" aria-label="فیلتر وضعیت">
+      <a class="btn btn-sm {% if not current_status %}btn-primary{% else %}btn-glass{% endif %}"
+         href=".">همه</a>
+      {% for value, label in status_choices %}
+        <a class="btn btn-sm {% if current_status == value %}btn-primary{% else %}btn-glass{% endif %}"
+           href="?status={{ value }}">{{ label }}</a>
+      {% endfor %}
     </div>
+  {% endif %}
 
-    {% if not is_history %}
-      <div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-label="فیلتر وضعیت">
-        <a class="btn btn-sm {% if not current_status %}btn-ink{% else %}btn-outline-ink{% endif %}"
-           href=".">همه</a>
-        {% for value, label in status_choices %}
-          <a class="btn btn-sm {% if current_status == value %}btn-ink{% else %}btn-outline-ink{% endif %}"
-             href="?status={{ value }}">{{ label }}</a>
-        {% endfor %}
+  {% if page_obj %}
+    <div class="ledger mt-4">
+      <div class="ledger-head">
+        <span>درخواست</span>
+        <span>طرفین</span>
+        <span>مهارت</span>
+        <span>وضعیت</span>
+        <span>تاریخ</span>
       </div>
-    {% endif %}
-
-    {% if page_obj %}
-      <div class="ledger">
-        <div class="ledger-head">
-          <span>درخواست</span>
-          <span>طرفین</span>
-          <span>مهارت</span>
-          <span>وضعیت</span>
-          <span>تاریخ</span>
-        </div>
-        {% for exchange in page_obj %}
-          <div class="ledger-row">
-            <div class="ledger-title-cell min-w-0">
-              <div class="ledger-title">
-                <a class="stretched" href="{{ exchange.get_absolute_url }}">{{ exchange.title }}</a>
-              </div>
-              <div class="ledger-desc">
-                {{ exchange.requester.display_name }} و {{ exchange.provider.display_name }}
-              </div>
+      {% for exchange in page_obj %}
+        <div class="ledger-row">
+          <div class="ledger-title-cell min-w-0">
+            <div class="ledger-title">
+              <a class="stretched" href="{{ exchange.get_absolute_url }}">{{ exchange.title }}</a>
             </div>
-            <div class="ledger-cell ledger-meta-cell ledger-level-cell">
-              <span class="type-mark type-skill">ارسالی</span>
-              <span class="d-block ledger-cell-num mt-1 ink-3 small">
-                دریافتی: {{ exchange.provider.display_name }}
-              </span>
-            </div>
-            <div class="ledger-cell ledger-meta-cell">
-              {{ exchange.skill.title }}
-            </div>
-            <div class="ledger-cell ledger-meta-cell">
-              <span class="status-badge status-{{ exchange.status }}">{{ exchange.get_status_display }}</span>
-            </div>
-            <div class="ledger-cell ledger-cell-num ledger-meta-cell">
-              <span class="tnum">{{ exchange.created_at|date:"Y/m/d" }}</span>
+            <div class="ledger-desc">
+              {{ exchange.requester.display_name }} و {{ exchange.provider.display_name }}
             </div>
           </div>
-        {% endfor %}
-      </div>
-      <div class="mt-4">{% include "partials/pagination.html" %}</div>
-    {% else %}
-      <div class="empty-state">
-        <div class="empty-icon" aria-hidden="true"><i class="bi bi-inbox"></i></div>
-        <h2>این فهرست خالی است</h2>
-        <p>از صفحهٔ هر مهارت می‌توانی درخواست تبادل ثبت کنی.</p>
-        <a class="btn btn-primary" href="{% url 'skills:list' %}">دیدن مهارت‌ها</a>
-      </div>
-    {% endif %}
-  </div>
+          <div class="ledger-cell ledger-meta-cell ledger-level-cell">
+            <span class="type-mark type-skill">ارسالی</span>
+            <span class="d-block ledger-cell-num mt-1 ink-3 small">
+              دریافتی: {{ exchange.provider.display_name }}
+            </span>
+          </div>
+          <div class="ledger-cell ledger-meta-cell">
+            {{ exchange.skill.title }}
+          </div>
+          <div class="ledger-cell ledger-meta-cell">
+            <span class="status-badge status-{{ exchange.status }}">{{ exchange.get_status_display }}</span>
+          </div>
+          <div class="ledger-cell ledger-cell-num ledger-meta-cell">
+            <span class="tnum">{{ exchange.created_at|date:"Y/m/d" }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4">{% include "partials/pagination.html" %}</div>
+  {% else %}
+    <div class="empty-state mt-4">
+      <div class="empty-icon" aria-hidden="true"><i class="bi bi-inbox"></i></div>
+      <h2>این فهرست خالی است</h2>
+      <p>از صفحهٔ هر مهارت می‌توانی درخواست تبادل ثبت کنی.</p>
+      <a class="btn btn-primary" href="{% url 'skills:list' %}">دیدن مهارت‌ها</a>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

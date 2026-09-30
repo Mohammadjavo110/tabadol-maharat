@@ -7,7 +7,7 @@
 {% block dashboard_content %}
 <div class="row g-4">
   <div class="col-lg-4">
-    <div class="bt-ink">
+    <div class="card">
       <div class="card-header"><h2>افزودن دسته‌بندی</h2></div>
       <div class="card-body">
         <form method="post" novalidate>
@@ -26,7 +26,7 @@
   </div>
 
   <div class="col-lg-8">
-    <div class="bt-ink">
+    <div class="card">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0 dense">
           <caption class="visually-hidden">فهرست دسته‌بندی‌ها</caption>
@@ -47,7 +47,7 @@
                 <td class="text-center tnum">{{ category.skills_count }}</td>
                 <td class="text-center tnum">{{ category.active_skills }}</td>
                 <td class="text-center text-nowrap">
-                  <a class="btn btn-sm btn-outline-ink"
+                  <a class="btn btn-sm btn-glass"
                      href="{% url 'dashboard:category_edit' category.pk %}">ویرایش</a>
                   <form method="post" action="{% url 'dashboard:category_delete' category.pk %}"
                         class="d-inline"

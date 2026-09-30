@@ -4,73 +4,71 @@
 {% block title %}مهارت‌های من — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<section class="section py-4">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule mb-4">
-      <div>
-        <h1 class="section-title">مهارت‌های من</h1>
-        <p class="section-subtitle">
-          {{ counts.total }} مورد — {{ counts.active }} فعال، {{ counts.inactive }} غیرفعال
-        </p>
-      </div>
-      <a class="btn btn-primary" href="{% url 'skills:create' %}">ثبت مهارت جدید</a>
+<section class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule">
+    <div>
+      <h1 class="section-title">مهارت‌های من</h1>
+      <p class="section-subtitle">
+        {{ counts.total }} مورد — {{ counts.active }} فعال، {{ counts.inactive }} غیرفعال
+      </p>
     </div>
+    <a class="btn btn-primary" href="{% url 'skills:create' %}">ثبت مهارت جدید</a>
+  </div>
 
-    {% if skills %}
-      <div class="ledger">
-        <div class="ledger-head">
-          <span>مهارت یا خدمت</span>
-          <span>دسته‌بندی</span>
-          <span>وضعیت</span>
-          <span>دنبال‌کننده</span>
-          <span>عملیات</span>
-        </div>
-        {% for skill in page_obj %}
-          <div class="ledger-row">
-            <div class="ledger-title-cell min-w-0">
-              <span class="type-mark type-{{ skill.type }}">{{ skill.get_type_display }}</span>
-              <div class="ledger-title mt-1">
-                <a class="stretched" href="{{ skill.get_absolute_url }}">{{ skill.title }}</a>
-              </div>
-              <div class="ledger-desc">{{ skill.description|truncatewords:16 }}</div>
+  {% if skills %}
+    <div class="ledger mt-4">
+      <div class="ledger-head">
+        <span>مهارت یا خدمت</span>
+        <span>دسته‌بندی</span>
+        <span>وضعیت</span>
+        <span>دنبال‌کننده</span>
+        <span>عملیات</span>
+      </div>
+      {% for skill in page_obj %}
+        <div class="ledger-row">
+          <div class="ledger-title-cell min-w-0">
+            <span class="type-mark type-{{ skill.type }}">{{ skill.get_type_display }}</span>
+            <div class="ledger-title mt-1">
+              <a class="stretched" href="{{ skill.get_absolute_url }}">{{ skill.title }}</a>
             </div>
+            <div class="ledger-desc">{{ skill.description|truncatewords:16 }}</div>
+          </div>
 
-            <div class="ledger-cell ledger-level-cell">
-              <span class="level-meter" role="img" aria-label="سطح: {{ skill.get_level_display }}">
-                {% for on in skill.level|level_bars %}<i class="{% if on %}on{% endif %}"></i>{% endfor %}
-              </span>
-            </div>
+          <div class="ledger-cell ledger-level-cell">
+            <span class="level-meter" role="img" aria-label="سطح: {{ skill.get_level_display }}">
+              {% for on in skill.level|level_bars %}<i class="{% if on %}on{% endif %}"></i>{% endfor %}
+            </span>
+          </div>
 
-            <div class="ledger-cell ledger-meta-cell">
-              {% if skill.is_active %}
-                <span class="status-badge status-approved">فعال</span>
-              {% else %}
-                <span class="status-badge status-rejected">غیرفعال</span>
-              {% endif %}
-            </div>
+          <div class="ledger-cell ledger-meta-cell">
+            {% if skill.is_active %}
+              <span class="status-badge status-approved">فعال</span>
+            {% else %}
+              <span class="status-badge status-rejected">غیرفعال</span>
+            {% endif %}
+          </div>
 
-            <div class="ledger-cell ledger-cell-num ledger-meta-cell">
-              <span class="tnum">{{ skill.watchers_count }}</span>
-            </div>
+          <div class="ledger-cell ledger-cell-num ledger-meta-cell">
+            <span class="tnum">{{ skill.watchers_count }}</span>
+          </div>
 
-            <div class="ledger-cell ledger-meta-cell">
-              <div class="d-flex gap-1">
-                <a class="btn btn-sm btn-outline-ink" href="{% url 'skills:edit' skill.pk %}">ویرایش</a>
-                <a class="btn btn-sm btn-outline-danger" href="{% url 'skills:delete' skill.pk %}">حذف</a>
-              </div>
+          <div class="ledger-cell ledger-meta-cell">
+            <div class="d-flex gap-1">
+              <a class="btn btn-sm btn-glass" href="{% url 'skills:edit' skill.pk %}">ویرایش</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'skills:delete' skill.pk %}">حذف</a>
             </div>
           </div>
-        {% endfor %}
-      </div>
-      <div class="mt-4">{% include "partials/pagination.html" %}</div>
-    {% else %}
-      <div class="empty-state">
-        <div class="empty-icon" aria-hidden="true"><i class="bi bi-award"></i></div>
-        <h2>هنوز چیزی ثبت نکرده‌اید</h2>
-        <p>مهارت‌ها و خدماتت را ثبت کن تا در نتایج جستجو دیده شوی و درخواست بگیری.</p>
-        <a class="btn btn-primary" href="{% url 'skills:create' %}">ثبت اولین مهارت</a>
-      </div>
-    {% endif %}
-  </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4">{% include "partials/pagination.html" %}</div>
+  {% else %}
+    <div class="empty-state mt-4">
+      <div class="empty-icon" aria-hidden="true"><i class="bi bi-award"></i></div>
+      <h2>هنوز چیزی ثبت نکرده‌اید</h2>
+      <p>مهارت‌ها و خدماتت را ثبت کن تا در نتایج جستجو دیده شوی و درخواست بگیری.</p>
+      <a class="btn btn-primary" href="{% url 'skills:create' %}">ثبت اولین مهارت</a>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

@@ -45,6 +45,11 @@
       </ul>
 
       <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item">
+          <button type="button" class="theme-toggle" data-theme-toggle
+                  aria-label="تغییر حالت روشن و تیره">☾</button>
+        </li>
+
         {% if user.is_authenticated %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button"

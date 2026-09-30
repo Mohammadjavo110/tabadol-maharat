@@ -30,7 +30,7 @@
   </div>
 </form>
 
-<div class="bt-ink">
+<div class="card">
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0 dense">
       <caption class="visually-hidden">فهرست کاربران</caption>
@@ -71,7 +71,7 @@
                 <form method="post" action="{% url 'dashboard:user_change_role' item.pk %}">
                   {% csrf_token %}
                   <input type="hidden" name="role" value="{% if item.role == 'admin' %}user{% else %}admin{% endif %}">
-                  <button type="submit" class="btn btn-sm btn-outline-ink">
+                  <button type="submit" class="btn btn-sm btn-glass">
                     {% if item.role == "admin" %}مدیر سیستم{% else %}کاربر{% endif %}
                   </button>
                 </form>

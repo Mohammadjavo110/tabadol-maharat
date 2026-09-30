@@ -6,17 +6,17 @@
 
 {% block dashboard_content %}
 <div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-label="فیلتر وضعیت">
-  <a class="btn btn-sm {% if current_status == 'open' %}btn-ink{% else %}btn-outline-ink{% endif %}"
+  <a class="btn btn-sm {% if current_status == 'open' %}btn-ink{% else %}btn-glass{% endif %}"
      href="?status=open">باز ({{ totals.open_reports }})</a>
-  <a class="btn btn-sm {% if current_status == 'resolved' %}btn-ink{% else %}btn-outline-ink{% endif %}"
+  <a class="btn btn-sm {% if current_status == 'resolved' %}btn-ink{% else %}btn-glass{% endif %}"
      href="?status=resolved">رسیدگی‌شده</a>
-  <a class="btn btn-sm btn-outline-ink" href="?status=">همه ({{ totals.all_reports }})</a>
+  <a class="btn btn-sm btn-glass" href="?status=">همه ({{ totals.all_reports }})</a>
 </div>
 
 {% if page_obj %}
   <div class="d-flex flex-column gap-3">
     {% for report in page_obj %}
-      <div class="bt-ink">
+      <div class="card">
         <div class="pt-3">
           <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
             <div>

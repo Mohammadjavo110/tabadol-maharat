@@ -4,37 +4,35 @@
 {% block title %}دنبال‌شده‌ها — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<section class="section py-4">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule mb-4">
-      <div>
-        <h1 class="section-title">دنبال‌شده‌ها</h1>
-        <p class="section-subtitle">مهارت‌هایی که برای تبادل زیر نظر گذاشته‌ای.</p>
-      </div>
-      <span class="tag tnum">{{ watches_count }} مورد</span>
+<section class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 section-rule">
+    <div>
+      <h1 class="section-title">دنبال‌شده‌ها</h1>
+      <p class="section-subtitle">مهارت‌هایی که برای تبادل زیر نظر گذاشته‌ای.</p>
     </div>
-
-    {% if watches %}
-      <div class="ledger">
-        <div class="ledger-head">
-          <span>مهارت یا خدمت</span>
-          <span>دسته‌بندی</span>
-          <span>ارائه‌دهنده</span>
-          <span>دنبال‌کننده</span>
-          <span>ثبت</span>
-        </div>
-        {% for watch in watches %}
-          {% include "partials/ledger_skill.html" with skill=watch.skill %}
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="empty-state">
-        <div class="empty-icon" aria-hidden="true"><i class="bi bi-bookmark"></i></div>
-        <h2>هنوز چیزی دنبال نکرده‌ای</h2>
-        <p>در صفحهٔ هر مهارت می‌توانی آن را به این فهرست اضافه کنی.</p>
-        <a class="btn btn-primary" href="{% url 'skills:list' %}">دیدن مهارت‌ها</a>
-      </div>
-    {% endif %}
+    <span class="tag tnum">{{ watches_count }} مورد</span>
   </div>
+
+  {% if watches %}
+    <div class="ledger mt-4">
+      <div class="ledger-head">
+        <span>مهارت یا خدمت</span>
+        <span>دسته‌بندی</span>
+        <span>ارائه‌دهنده</span>
+        <span>دنبال‌کننده</span>
+        <span>ثبت</span>
+      </div>
+      {% for watch in watches %}
+        {% include "partials/ledger_skill.html" with skill=watch.skill %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state mt-4">
+      <div class="empty-icon" aria-hidden="true"><i class="bi bi-bookmark"></i></div>
+      <h2>هنوز چیزی دنبال نکرده‌ای</h2>
+      <p>در صفحهٔ هر مهارت می‌توانی آن را به این فهرست اضافه کنی.</p>
+      <a class="btn btn-primary" href="{% url 'skills:list' %}">دیدن مهارت‌ها</a>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

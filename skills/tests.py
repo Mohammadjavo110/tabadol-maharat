@@ -1,3 +1,6 @@
+from pathlib import Path
+
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 
@@ -171,6 +174,40 @@ class SkillFilterTests(TestCase):
         response = self.client.get(reverse("skills:list"))
         self.assertEqual(response.content.count(b"ledger-row"), 2)
         self.assertContains(response, "ledger-head")
+
+
+class LiquidGlassRenderingTests(TestCase):
+    """هیچ صفحه‌ای نباید بدون سطح شیشه‌ای رندر شود."""
+
+    def setUp(self):
+        self.owner = make_user(email="owner@test.ir", full_name="سارا محمدی")
+        self.category = make_category("برنامه‌نویسی")
+        self.skill = make_skill(self.owner, self.category, title="آموزش پایتون")
+
+    def test_css_ships_liquid_glass_tokens(self):
+        css = Path(settings.STATICFILES_DIRS[0]) / "css" / "main.css"
+        text = css.read_text(encoding="utf-8")
+        for token in ("backdrop-filter", "--glass-bg", "prefers-color-scheme",
+                      "prefers-reduced-motion", "@supports not"):
+            with self.subTest(token=token):
+                self.assertIn(token, text)
+
+    def test_no_blur_support_fallback_exists(self):
+        css = (Path(settings.STATICFILES_DIRS[0]) / "css" / "main.css").read_text(encoding="utf-8")
+        self.assertIn("@supports not ((backdrop-filter: blur(1px))", css)
+
+    def test_home_has_hero_glass_and_stat_tiles(self):
+        body = self.client.get(reverse("home")).content.decode()
+        self.assertIn("hero-glass", body)
+        self.assertIn("stat-tile", body)
+
+    def test_theme_toggle_present_for_guests(self):
+        body = self.client.get(reverse("home")).content.decode()
+        self.assertIn("data-theme-toggle", body)
+
+    def test_navbar_uses_glass(self):
+        body = self.client.get(reverse("home")).content.decode()
+        self.assertIn("navbar-skill", body)
 
 
 class LedgerRenderingTests(TestCase):

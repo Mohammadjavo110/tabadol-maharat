@@ -7,28 +7,28 @@
 {% block dashboard_subtitle %}وضعیت لحظه‌ای کاربران، مهارت‌ها و درخواست‌ها{% endblock %}
 
 {% block dashboard_content %}
-<div class="stat-strip mb-5">
-  <a class="stat-link" href="{% url 'dashboard:users' %}">
+<div class="stat-strip mb-4">
+  <a class="stat-tile" href="{% url 'dashboard:users' %}">
     <div class="stat-value tnum">{{ totals.users|intcomma }}</div>
     <div class="stat-label">کاربر — {{ totals.active_users }} فعال</div>
   </a>
-  <a class="stat-link" href="{% url 'dashboard:skills' %}">
+  <a class="stat-tile" href="{% url 'dashboard:skills' %}">
     <div class="stat-value tnum">{{ totals.skills|intcomma }}</div>
     <div class="stat-label">مهارت — {{ totals.active_skills }} فعال</div>
   </a>
-  <a class="stat-link" href="{% url 'dashboard:exchanges' %}">
+  <a class="stat-tile" href="{% url 'dashboard:exchanges' %}">
     <div class="stat-value tnum">{{ totals.exchanges|intcomma }}</div>
     <div class="stat-label">تبادل — {{ totals.approved_exchanges }} تأییدشده</div>
   </a>
-  <a class="stat-link" href="{% url 'dashboard:exchanges' %}?status=pending">
+  <a class="stat-tile" href="{% url 'dashboard:exchanges' %}?status=pending">
     <div class="stat-value tnum">{{ totals.pending_exchanges }}</div>
     <div class="stat-label">در انتظار بررسی</div>
   </a>
 </div>
 
-<div class="row g-5">
+<div class="row g-4">
   <div class="col-lg-7">
-    <div class="bt-ink">
+    <div class="card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h2>امروز</h2>
         <a class="small" href="{% url 'dashboard:daily_report' %}">گزارش کامل روز</a>
@@ -36,24 +36,32 @@
       <div class="card-body">
         <div class="row g-3">
           <div class="col-6 col-md-3">
-            <div class="stat-value tnum" style="font-size: 1.5rem;">{{ today.new_users }}</div>
-            <div class="stat-label">کاربر تازه</div>
+            <div class="text-center">
+              <div class="stat-value tnum" style="font-size: 1.6rem;">{{ today.new_users }}</div>
+              <div class="stat-label">کاربر تازه</div>
+            </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="stat-value tnum" style="font-size: 1.5rem;">{{ today.new_skills }}</div>
-            <div class="stat-label">مهارت تازه</div>
+            <div class="text-center">
+              <div class="stat-value tnum" style="font-size: 1.6rem;">{{ today.new_skills }}</div>
+              <div class="stat-label">مهارت تازه</div>
+            </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="stat-value tnum" style="font-size: 1.5rem;">{{ today.new_exchanges }}</div>
-            <div class="stat-label">درخواست تازه</div>
+            <div class="text-center">
+              <div class="stat-value tnum" style="font-size: 1.6rem;">{{ today.new_exchanges }}</div>
+              <div class="stat-label">درخواست تازه</div>
+            </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="stat-value tnum" style="font-size: 1.5rem;">{{ today.approved_today }}</div>
-            <div class="stat-label">تأییدشده</div>
+            <div class="text-center">
+              <div class="stat-value tnum" style="font-size: 1.6rem;">{{ today.approved_today }}</div>
+              <div class="stat-label">تأییدشده</div>
+            </div>
           </div>
         </div>
-        <hr style="border-color: var(--rule);">
-        <div class="d-flex flex-wrap gap-3 small ink-3">
+        <hr style="border-color: var(--sep);">
+        <div class="d-flex flex-wrap gap-3 small ink-2">
           <span>{{ today.new_messages }} پیام</span>
           <span>{{ today.new_reports }} گزارش</span>
           <span>{{ today.reviewed_today }} بررسی انجام‌شده</span>
@@ -61,7 +69,7 @@
       </div>
     </div>
 
-    <div class="bt-ink mt-4">
+    <div class="card mt-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h2>در انتظار بررسی</h2>
         <a class="small" href="{% url 'dashboard:exchanges' %}?status=pending">همه</a>
@@ -73,21 +81,21 @@
               <a class="fw-600 text-body" href="{% url 'exchanges:review' exchange.pk %}">
                 {{ exchange.title }}
               </a>
-              <div class="small ink-3">
+              <div class="small ink-2">
                 {{ exchange.requester.display_name }} و {{ exchange.provider.display_name }}
               </div>
             </div>
             <a class="btn btn-sm btn-primary" href="{% url 'exchanges:review' exchange.pk %}">بررسی</a>
           </div>
         {% empty %}
-          <p class="ink-3 m-0 p-3">درخواست بازی نیست.</p>
+          <p class="ink-2 m-0 p-3">درخواست بازی نیست.</p>
         {% endfor %}
       </div>
     </div>
   </div>
 
   <div class="col-lg-5">
-    <div class="bt-ink">
+    <div class="card h-100">
       <div class="card-header"><h2>پرطرفدارترین مهارت‌ها</h2></div>
       <div class="card-body p-0">
         {% for skill in top_skills %}
@@ -97,12 +105,12 @@
             <span class="tag text-nowrap tnum">{{ skill.total_watches }}</span>
           </a>
         {% empty %}
-          <p class="ink-3 m-0 p-3">مهارتی ثبت نشده.</p>
+          <p class="ink-2 m-0 p-3">مهارتی ثبت نشده.</p>
         {% endfor %}
       </div>
     </div>
 
-    <div class="bt-ink mt-4">
+    <div class="card mt-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h2>گزارش‌های باز</h2>
         <a class="small" href="{% url 'dashboard:reports' %}">همه</a>
@@ -112,22 +120,22 @@
           <div class="p-3 {% if not forloop.last %}border-bottom{% endif %}">
             <div class="d-flex justify-content-between gap-2">
               <span class="fw-600">{{ report.get_reason_display }}</span>
-              <small class="ink-3 tnum">{{ report.created_at|date:"Y/m/d" }}</small>
+              <small class="ink-2 tnum">{{ report.created_at|date:"Y/m/d" }}</small>
             </div>
             <p class="small ink-2 mb-1">{{ report.description|truncatewords:14 }}</p>
             <small class="ink-3">از {{ report.reporter.display_name }}</small>
           </div>
         {% empty %}
-          <p class="ink-3 m-0 p-3">گزارش بازی نیست.</p>
+          <p class="ink-2 m-0 p-3">گزارش بازی نیست.</p>
         {% endfor %}
       </div>
     </div>
   </div>
 </div>
 
-<div class="row g-5 mt-1">
+<div class="row g-4 mt-0">
   <div class="col-lg-6">
-    <div class="bt-ink">
+    <div class="card h-100">
       <div class="card-header"><h2>پرکاربردترین دسته‌بندی‌ها</h2></div>
       <div class="card-body p-0">
         {% for category in top_categories %}
@@ -136,14 +144,14 @@
             <span class="tag tnum">{{ category.skills_count }}</span>
           </div>
         {% empty %}
-          <p class="ink-3 m-0 p-3">دسته‌بندی ثبت نشده.</p>
+          <p class="ink-2 m-0 p-3">دسته‌بندی ثبت نشده.</p>
         {% endfor %}
       </div>
     </div>
   </div>
 
   <div class="col-lg-6">
-    <div class="bt-ink">
+    <div class="card h-100">
       <div class="card-header"><h2>فعال‌ترین کاربران</h2></div>
       <div class="card-body p-0">
         {% for item in busiest_users %}
@@ -154,7 +162,7 @@
             <span class="tag tnum">{{ item.exchange_count }} درخواست</span>
           </div>
         {% empty %}
-          <p class="ink-3 m-0 p-3">درخواستی ثبت نشده.</p>
+          <p class="ink-2 m-0 p-3">درخواستی ثبت نشده.</p>
         {% endfor %}
       </div>
     </div>

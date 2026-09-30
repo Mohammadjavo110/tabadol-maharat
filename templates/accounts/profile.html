@@ -13,7 +13,7 @@
 
     <div class="row g-4">
       <div class="col-lg-4">
-        <div class="bt-ink">
+        <div class="card">
           <div class="pt-3 text-center">
             <img class="avatar avatar-lg mb-3" src="{{ user.avatar_url }}"
                  alt="تصویر پروفایل {{ user.display_name }}">
@@ -34,15 +34,15 @@
         </div>
 
         <div class="d-grid gap-2 mt-3">
-          <a class="btn btn-outline-ink" href="{% url 'accounts:password_change' %}">تغییر رمز عبور</a>
-          <a class="btn btn-outline-ink" href="{% url 'accounts:public_profile' user.pk %}">
+          <a class="btn btn-glass" href="{% url 'accounts:password_change' %}">تغییر رمز عبور</a>
+          <a class="btn btn-glass" href="{% url 'accounts:public_profile' user.pk %}">
             دیدن نسخهٔ عمومی
           </a>
         </div>
       </div>
 
       <div class="col-lg-8">
-        <div class="bt-ink">
+        <div class="card">
           <div class="card-header"><h2>ویرایش اطلاعات</h2></div>
           <div class="card-body">
             <form method="post" enctype="multipart/form-data" novalidate>
