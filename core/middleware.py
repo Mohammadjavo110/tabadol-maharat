@@ -1,27 +1,13 @@
-"""میان‌افزارهای سبک پروژه."""
+"""میان‌افزارهای سبک پروژه.
+
+نکته: در حالت ``DEBUG``، فرمان ``runserver`` فایل‌های استاتیک را بیرون از زنجیرهٔ
+میان‌افزارها سرو می‌کند (به‌کمک ``StaticFilesHandler``). پس هیچ میان‌افزاری
+نمی‌تواند هدر کش را روی آن‌ها بگذارد. برای همین کش‌بusting با URL انجام می‌شود،
+نه با هدر — روشن‌تر در ``core/templatetags/skillyar_tags.py``.
+"""
 
 from django.conf import settings
 from django.http import HttpResponse
-
-
-class NoStoreStaticMiddleware:
-    """در حالت توسعه، فایل‌های استاتیک هرگز نباید از کش مرورگر سرو شوند.
-
-    بدون این هدر، مرورگر با کش تقریبی تصمیم می‌گیرد و ممکن است نسخهٔ قدیمی CSS/JS را
-    نشان دهد حتی وقتی فایل روی دیسک عوض شده است. این مشکل هنگام بازطراحی رابط کاربری
-    چندین بار پیش آمد، پس در حالت توسعه صریحاً غیرفعال می‌شود.
-    """
-
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        response = self.get_response(request)
-        if settings.DEBUG and request.path_info.startswith(settings.STATIC_URL):
-            response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-            response["Pragma"] = "no-cache"
-            response["Expires"] = "0"
-        return response
 
 
 class SecurityHeadersMiddleware:
